@@ -1,0 +1,94 @@
+Token: 2,1 program  -> (2,1): program es de tipo 11
+
+Token: 2,9 p04  -> (2,9): p04 es de tipo 22
+
+Token: 2,12 ;  -> (2,12): ; es de tipo 7
+
+Token: 3,2 begin  -> (3,2): begin es de tipo 19
+
+Token: 4,3 var  -> (4,3): var es de tipo 12
+
+Token: 4,7 a  -> (4,7): a es de tipo 22
+
+Token: 4,8 :  -> (4,8): : es de tipo 3
+
+Token: 4,9 real  -> (4,9): real es de tipo 15
+
+Token: 4,13 ;  -> (4,13): ; es de tipo 7
+
+Token: 4,15 endvar  -> (4,15): endvar es de tipo 13
+
+Token: 5,3 begin  -> (5,3): begin es de tipo 19
+
+Token: 6,4 var  -> (6,4): var es de tipo 12
+
+Token: 6,8 b  -> (6,8): b es de tipo 22
+
+Token: 6,9 :  -> (6,9): : es de tipo 3
+
+Token: 6,10 real  -> (6,10): real es de tipo 15
+
+Token: 6,14 ;  -> (6,14): ; es de tipo 7
+
+Token: 6,16 endvar  -> (6,16): endvar es de tipo 13
+
+Token: 7,4 begin  -> (7,4): begin es de tipo 19
+
+Token: 8,6 var  -> (8,6): var es de tipo 12
+
+Token: 8,10 a  -> (8,10): a es de tipo 22
+
+Token: 8,11 :  -> (8,11): : es de tipo 3
+
+Token: 8,12 integer  -> (8,12): integer es de tipo 14
+
+Token: 8,19 ;  -> (8,19): ; es de tipo 7
+
+Token: 8,21 endvar  -> (8,21): endvar es de tipo 13
+
+Token: 10,6 a  -> (10,6): a es de tipo 22
+
+Token: 10,8 :=  -> (10,8): := es de tipo 6
+
+Token: 10,11 a  -> (10,11): a es de tipo 22
+
+Token: 10,12 -  -> (10,12): - es de tipo 9
+
+Token: 10,13 a  -> (10,13): a es de tipo 22
+
+Token: 10,14 +  -> (10,14): + es de tipo 9
+
+Token: 10,15 a  -> (10,15): a es de tipo 22
+
+Token: 10,16 +  -> (10,16): + es de tipo 9
+
+Token: 10,17 a  -> (10,17): a es de tipo 22
+
+Token: 10,18 -  -> (10,18): - es de tipo 9
+
+Token: 10,19 a  -> (10,19): a es de tipo 22
+
+Token: 10,20 +  -> (10,20): + es de tipo 9
+
+Token: 10,21 a  -> (10,21): a es de tipo 22
+
+Token: 10,22 +  -> (10,22): + es de tipo 9
+
+Token: 10,23 a  -> (10,23): a es de tipo 22
+
+Token: 10,24 -  -> (10,24): - es de tipo 9
+
+Token: 10,25 a  -> (10,25): a es de tipo 22
+
+Token: 10,26 +  -> (10,26): + es de tipo 9
+
+Token: 10,27 a  -> (10,27): a es de tipo 22
+
+Token: 10,28 -  -> (10,28): - es de tipo 9
+
+Token: 10,29 a  -> (10,29): a es de tipo 22
+
+Token: 11,4 end  -> (11,4): end es de tipo 20
+
+Token: 12,3 END  -> (12,3): END es de tipo 20
+

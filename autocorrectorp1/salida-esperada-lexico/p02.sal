@@ -1,0 +1,12 @@
+Token: 1,1 program  -> (1,1): program es de tipo 11
+
+Token: 1,9 p02  -> (1,9): p02 es de tipo 22
+
+Token: 1,12 ;  -> (1,12): ; es de tipo 7
+
+Token: 3,1 begin  -> (3,1): begin es de tipo 19
+
+Token: 4,5 var  -> (4,5): var es de tipo 12
+
+Token: 4,9 9  -> (4,9): 9 es de tipo 23
+

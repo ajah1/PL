@@ -1,0 +1,14 @@
+program p05;
+
+begin
+  var a : array[1..5,2..6,3..7]of pointer of pointer of real;
+      b : integer;
+      c : real;
+  endvar
+
+  b := 23 mod 4 + 5 DIV 2;
+  c := b * 3 / 7;
+  
+  write(b);   (* 5 *)
+  write(c)    (* 2.1428... *)
+end
