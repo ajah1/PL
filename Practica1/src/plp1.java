@@ -10,10 +10,9 @@ class plp1 {
           try {
             RandomAccessFile entrada = new RandomAccessFile(args[0],"r");
             AnalizadorLexico al = new AnalizadorLexico(entrada);
-            AnalizadorSintacticoDR asdr = new AnalizadorSintacticoDR(al);
-
+            /*AnalizadorSintacticoDR asdr = new AnalizadorSintacticoDR(al);
             asdr.S(); // simbolo inicial de la gramatica
-            asdr.comprobarFinFichero();
+            asdr.comprobarFinFichero();*/
           }
           catch (FileNotFoundException e) {
             System.out.println("Error, fichero no encontrado: " + args[0]);
