@@ -1,8 +1,80 @@
-Token: 1,2 program  -> (1,2): program es de tipo 22
+Token: 1,2 program  -> (1,2): program es de tipo -1
 
-Token: 1,11 p01  -> (1,11): p01 es de tipo 22
+Token: 1,11 p01  -> (1,11): p01 es de tipo -1
 
-Token: 1,14 ;  -> (1,14): ; es de tipo 7
+Token: 1,14 ;  -> (1,14): ; es de tipo -1
 
-Token: 3,2 begin  -> (3,2): begin es de tipo 22
+Token: 3,2 begin  -> (3,2): begin es de tipo -1
+
+Token: 4,4 var  -> (4,4): var es de tipo -1
+
+Token: 4,9 a  -> (4,9): a es de tipo -1
+
+Token: 4,12 :  -> (4,12): : es de tipo -1
+
+Token: 4,15 integer  -> (4,15): integer es de tipo -1
+
+Token: 4,22 ;  -> (4,22): ; es de tipo -1
+
+Token: 5,8 b  -> (5,8): b es de tipo -1
+
+Token: 5,11 :  -> (5,11): : es de tipo -1
+
+Token: 5,14 array  -> (5,14): array es de tipo -1
+
+Token: 5,20 [  -> (5,20): [ es de tipo -1
+
+Token: 5,24 1  -> (5,24): 1 es de tipo -1
+
+Token: 5,25 ..  -> (5,25): .. es de tipo -1
+
+Token: 5,28 7  -> (5,28): 7 es de tipo -1
+
+Token: 5,30 ]  -> (5,30): ] es de tipo -1
+
+Token: 5,33 of  -> (5,33): of es de tipo -1
+
+Token: 5,37 real  -> (5,37): real es de tipo -1
+
+Token: 5,41 ;  -> (5,41): ; es de tipo -1
+
+Token: 6,8 c  -> (6,8): c es de tipo -1
+
+Token: 6,11 :  -> (6,11): : es de tipo -1
+
+Token: 6,14 pointer  -> (6,14): pointer es de tipo -1
+
+Token: 6,23 of  -> (6,23): of es de tipo -1
+
+Token: 6,27 integer  -> (6,27): integer es de tipo -1
+
+Token: 6,34 ;  -> (6,34): ; es de tipo -1
+
+Token: 7,4 endvar  -> (7,4): endvar es de tipo -1
+
+Token: 9,5 a  -> (9,5): a es de tipo -1
+
+Token: 9,7 :=  -> (9,7): := es de tipo -1
+
+Token: 9,11 7  -> (9,11): 7 es de tipo -1
+
+Token: 9,14 mOD  -> (9,14): mOD es de tipo -1
+
+Token: 9,19 b  -> (9,19): b es de tipo -1
+
+Token: 9,21 +  -> (9,21): + es de tipo -1
+
+Token: 9,24 2.3  -> (9,24): 2.3 es de tipo -1
+
+Token: 9,27 ;  -> (9,27): ; es de tipo -1
+
+Token: 10,5 write  -> (10,5): write es de tipo -1
+
+Token: 10,11 (  -> (10,11): ( es de tipo -1
+
+Token: 10,13 c  -> (10,13): c es de tipo -1
+
+Token: 10,14 )  -> (10,14): ) es de tipo -1
+
+Token: 11,2 end  -> (11,2): end es de tipo -1
 

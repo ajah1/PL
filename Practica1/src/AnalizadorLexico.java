@@ -35,6 +35,7 @@ public class AnalizadorLexico {
 		do {
 			nuevo = delta(estado,c);
 			if (nuevo == -1) {
+				//System.out.println("ENCUENTRA UN -1 CON EL CARACTER--->" +c+ "<--");
 				if (errorLexico(c) == false) {
 					return new Token(_fila, _columna, Character.toString(c), Token.EOF);
 				} else {
@@ -78,103 +79,25 @@ public class AnalizadorLexico {
 		return false;
 	}
 	
-	public void devolverCaracteres(int estado, char c) {
-		  switch(estado){
-		  case 3:
-			  _tipo = Token.PARI;
-			  rollBack();
-			  ++_columna;
-			  break;
-		  case 10:
-			  _tipo = Token.DOSP;
-			  ++_columna;
-			  rollBack();
-			  break;
-		  case 19:
-			  _tipo = Token.ID;
-			  ++_columna;
-			  rollBack();
-			  break;
-		  case 23:
-			  _tipo = Token.NUMREAL;
-			  ++_columna;
-			  rollBack();
-			  break;
-		  case 24:
-			  _tipo = Token.NUMENTERO;
-			  _lexema=_lexema.substring(0, _lexema.length());
-			  ++_columna;
-			  rollBack();
-			  break;
-		  case 25:
-			  _tipo = Token.NUMENTERO;
-			  _lexema=_lexema.substring(0, _lexema.length()-1);
-			  rollBack();
-			  rollBack();
-			  ++_columna;
-			  break;
-		  case 6:
-			  _lexema += c;
-			  _tipo = Token.PARD;
-			  ++_columna;
-			  break;
-		  case 7:
-			  _lexema += c;
-			  _tipo = Token.COMA;
-			  ++_columna;
-			  break;
-		  case 9:
-			  _lexema += c;
-			  _tipo = Token.ASIG;
-			  ++_columna;
-			  break;
-		  case 11:
-			  _lexema += c;
-			  _tipo = Token.CORI;
-			  ++_columna;
-			  break;
-		  case 12:
-			  _lexema += c;
-			  _tipo = Token.CORD;
-			  ++_columna;
-			  break;
-		  case 13:
-			  _lexema += c;
-			  _tipo = Token.PYC;
-			  ++_columna;
-			  break;
-		  case 15:
-			  _lexema += c;
-			  _tipo = Token.PTOPTO;
-			  ++_columna;
-			  break;
-		  case 16:
-			  _lexema += c;
-			  _tipo = Token.OPAS;
-			  ++_columna;
-			  break;
-		  case 17:
-			  _lexema += c;
-			  _tipo = Token.OPMUL;
-			  ++_columna;
-			  break;
-      }
-	}
-	/*public void devolverCaracteres(int e, char c) {
+	public void devolverCaracteres(int e, char c) {
+		// Hacer rollback en los estados finales que lo necesitan
 		if (esFinalRol(e)) {
 			rollBack();
-			if (e == 25) {
+			if (e == 25) // Necesita dos rollback
 				rollBack();
-				_columna -= 2;
-			}
-				
 		}
-		if (e != 19) _tipo 	= Token.nombreToken.indexOf(c);
-		else _tipo 	= palabraReservada(_lexema);
 		
-		_lexema = obtenerLexema(e);
-		++_columna;
-	}*/
+		_columna++;
+		_tipo = Token.nombreToken.indexOf(c);
+		
+		// Obtener el lexema
+		if (e == 24)  		_lexema=_lexema.substring(0, _lexema.length());
+		else if (e == 25)  	_lexema=_lexema.substring(0, _lexema.length()-1);
+		else if (e == 6 || e == 7 || e == 9 || e == 11 || e == 12 || 
+				e == 13 || e == 15 || e == 16 || e == 17) {
+			_lexema += c;
+		}
+	}
 	
 	public String obtenerLexema (int tipo) {
 		if (tipo == 19 || tipo == 23 || tipo == 24) {
@@ -252,8 +175,8 @@ public class AnalizadorLexico {
 				 else return 24;
 		case 21: if (c>='0' && c<='9') return 22;
 				 else return 25;
-		case 22: if (c>='0' && c<='9') return 23;
-				 else return 22;
+		case 22: if (c>='0' && c<='9') return 22;
+				 else return 23;
 		// Estados de aceptación
 		case 3:  return -1;
 		case 6:  return -1;
