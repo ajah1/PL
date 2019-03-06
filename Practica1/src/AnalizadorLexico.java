@@ -11,7 +11,8 @@ public class AnalizadorLexico {
 	int _fila 		= 1;
 	int _columna 	= 1;
 	int _pos 		= 0;
-	int _tipo		= 1;
+	int _tipo		= 99;
+	int aux_tipo 	= 99;
 	String _lexema 	= "";
 	int [] _finales =  {3, 6, 7, 9, 10, 11, 12, 13, 15, 16, 19, 23, 24, 25};
 	int [] _finalRol = {3, 10, 19, 23, 24, 25};
@@ -35,7 +36,7 @@ public class AnalizadorLexico {
 		do {
 			nuevo = delta(estado,c);
 			if (nuevo == -1) {
-				//System.out.println("ENCUENTRA UN -1 CON EL CARACTER--->" +c+ "<--");
+				//System.out.println("ENCUENTRA UN -1 --->" +c+ "<-- --->" +_fila+ "<-- --->" +_columna+ "<--");
 				if (errorLexico(c) == false) {
 					return new Token(_fila, _columna, Character.toString(c), Token.EOF);
 				} else {
@@ -45,15 +46,18 @@ public class AnalizadorLexico {
 				}
 			}
 			else if (esFinal(nuevo)) {
+				//System.out.println("ENCUENTRA FINAL --->" +c+ "<-- --->" +_fila+ "<-- --->" +_columna+ "<--");
 				estado = nuevo;
 				devolverCaracteres(nuevo, c);
-				Token t = new Token(_fila, (_columna - _lexema.length()), _lexema, _tipo);
+				Token t = new Token(_fila, (_columna - _lexema.length()-1), _lexema, aux_tipo);
 				_lexema = "";
 				return t;
 			} else {
 				if (nuevo == 1) _lexema = "";
 				else 			_lexema += c;
 				
+				System.out.println("interar -->" +c+ "<--");
+				//System.out.println(Token.nombreToken.indexOf(_tipo));
 				estado = nuevo;
 				c = leerCaracter();
 				++_columna;
@@ -80,6 +84,9 @@ public class AnalizadorLexico {
 	}
 	
 	public void devolverCaracteres(int e, char c) {
+		aux_tipo = _tipo;
+		
+		
 		// Hacer rollback en los estados finales que lo necesitan
 		if (esFinalRol(e)) {
 			rollBack();
@@ -88,7 +95,8 @@ public class AnalizadorLexico {
 		}
 		
 		_columna++;
-		_tipo = Token.nombreToken.indexOf(c);
+		//_tipo = Token.nombreToken.indexOf(Character.toString(c));
+		//System.out.println("devolver caracteres con el tipo-->" +c+ "<->"+_tipo+ "<--");
 		
 		// Obtener el lexema
 		if (e == 24)  		_lexema=_lexema.substring(0, _lexema.length());
