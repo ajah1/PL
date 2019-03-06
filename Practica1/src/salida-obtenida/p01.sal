@@ -1,0 +1,8 @@
+Token: 1,2 program  -> (1,2): program es de tipo 22
+
+Token: 1,11 p01  -> (1,11): p01 es de tipo 22
+
+Token: 1,14 ;  -> (1,14): ; es de tipo 7
+
+Token: 3,2 begin  -> (3,2): begin es de tipo 22
+

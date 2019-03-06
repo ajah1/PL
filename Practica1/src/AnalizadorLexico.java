@@ -1,28 +1,224 @@
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AnalizadorLexico {
 
-	private static final char EOF = '$';
+	private static final char EOF = (char)-1;
 	RandomAccessFile _entrada;
 	int _fila 		= 1;
 	int _columna 	= 1;
 	int _pos 		= 0;
+	int _tipo		= 1;
+	String _lexema 	= "";
+	int [] _finales =  {3, 6, 7, 9, 10, 11, 12, 13, 15, 16, 19, 23, 24, 25};
+	int [] _finalRol = {3, 10, 19, 23, 24, 25};
 	
 	public AnalizadorLexico(RandomAccessFile p_entrada) {
 		_entrada = p_entrada;
 	}
 	
+	public boolean esFinal (int p_nuevo) {
+		for (int f : _finales) {
+			if (p_nuevo == f) return true;
+		}
+		return false;
+	}
+	
 	public Token siguienteToken() {
+		int nuevo;
+		int estado = 1;
+		char c = leerCaracter();
+		++_pos;
+		do {
+			nuevo = delta(estado,c);
+			if (nuevo == -1) {
+				if (errorLexico(c) == false) {
+					return new Token(_fila, _columna, Character.toString(c), Token.EOF);
+				} else {
+					c = leerCaracter();
+					estado = 1;
+					nuevo = delta(estado, c);
+				}
+			}
+			else if (esFinal(nuevo)) {
+				estado = nuevo;
+				devolverCaracteres(nuevo, c);
+				Token t = new Token(_fila, (_columna - _lexema.length()), _lexema, _tipo);
+				_lexema = "";
+				return t;
+			} else {
+				if (nuevo == 1) _lexema = "";
+				else 			_lexema += c;
+				
+				estado = nuevo;
+				c = leerCaracter();
+				++_columna;
+				++_pos;
+			}
+		} while (true);
+	}
+	
+    public void rollBack(){
+        try {
+            --_pos;
+            _entrada.seek(_pos);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(AnalizadorLexico.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+	
+	public boolean esFinalRol (int p_nuevo) {
+		for (int f : _finalRol) {
+			if (p_nuevo == f) return true;
+		}
+		return false;
+	}
+	
+	public void devolverCaracteres(int estado, char c) {
+		  switch(estado){
+		  case 3:
+			  _tipo = Token.PARI;
+			  rollBack();
+			  ++_columna;
+			  break;
+		  case 10:
+			  _tipo = Token.DOSP;
+			  ++_columna;
+			  rollBack();
+			  break;
+		  case 19:
+			  _tipo = Token.ID;
+			  ++_columna;
+			  rollBack();
+			  break;
+		  case 23:
+			  _tipo = Token.NUMREAL;
+			  ++_columna;
+			  rollBack();
+			  break;
+		  case 24:
+			  _tipo = Token.NUMENTERO;
+			  _lexema=_lexema.substring(0, _lexema.length());
+			  ++_columna;
+			  rollBack();
+			  break;
+		  case 25:
+			  _tipo = Token.NUMENTERO;
+			  _lexema=_lexema.substring(0, _lexema.length()-1);
+			  rollBack();
+			  rollBack();
+			  ++_columna;
+			  break;
+		  case 6:
+			  _lexema += c;
+			  _tipo = Token.PARD;
+			  ++_columna;
+			  break;
+		  case 7:
+			  _lexema += c;
+			  _tipo = Token.COMA;
+			  ++_columna;
+			  break;
+		  case 9:
+			  _lexema += c;
+			  _tipo = Token.ASIG;
+			  ++_columna;
+			  break;
+		  case 11:
+			  _lexema += c;
+			  _tipo = Token.CORI;
+			  ++_columna;
+			  break;
+		  case 12:
+			  _lexema += c;
+			  _tipo = Token.CORD;
+			  ++_columna;
+			  break;
+		  case 13:
+			  _lexema += c;
+			  _tipo = Token.PYC;
+			  ++_columna;
+			  break;
+		  case 15:
+			  _lexema += c;
+			  _tipo = Token.PTOPTO;
+			  ++_columna;
+			  break;
+		  case 16:
+			  _lexema += c;
+			  _tipo = Token.OPAS;
+			  ++_columna;
+			  break;
+		  case 17:
+			  _lexema += c;
+			  _tipo = Token.OPMUL;
+			  ++_columna;
+			  break;
+      }
+	}
+	/*public void devolverCaracteres(int e, char c) {
+		if (esFinalRol(e)) {
+			rollBack();
+			if (e == 25) {
+				rollBack();
+				_columna -= 2;
+			}
+				
+		}
+		if (e != 19) _tipo 	= Token.nombreToken.indexOf(c);
+		else _tipo 	= palabraReservada(_lexema);
 		
-		return null;
+		_lexema = obtenerLexema(e);
+		++_columna;
+	}*/
+	
+	public String obtenerLexema (int tipo) {
+		if (tipo == 19 || tipo == 23 || tipo == 24) {
+			return _lexema.substring(0, _lexema.length());
+		} else if (tipo == 25){
+			return _lexema.substring(0, _lexema.length());
+		} else {
+			return Token.nombreToken.get(tipo);
+		}
+	}
+	
+	public int palabraReservada(String p_lexema) {
+		String l = p_lexema.toLowerCase();
+		switch (l) {
+			case "div": return Token.OPMUL;
+			case "mod": return Token.OPMUL;
+			default: return Token.ID;
+		}
+	}
+
+	
+	public boolean errorLexico (char c) {
+		if (c == ' ' || c == '\t') {
+			++_columna;
+			++_pos;
+		} else if (c ==  '\n') {
+			_columna = 1;
+			++_pos;
+			++_fila;
+		} else if (c == (char)-1){
+			return false;
+		} else {
+            System.err.println ("Error lexico (" +_fila+ "," 
+            					+_columna+ "): caracter '" 
+            					+c+ "' incorrecto");
+            System.exit(-1);
+		}
+		return true;
 	}
 	
 	public int delta (int p_estado, int c) {
 		switch (p_estado) {
 		// Estado inicial
-		case 1: 
+		case 1:
 			if (c=='(') return 2;
 			else if (c==')') return 6;
 			else if (c==',') return 7;

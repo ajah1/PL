@@ -10,7 +10,7 @@ public class Token {
 
 	public Token() {
 		lexema 	= "";
-		tipo 	= 0;
+		tipo 	= 1;
 	}
 	public Token(int p_f, int p_c, String p_lexema, int p_tipo) {
 		fila 	= p_f;

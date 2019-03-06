@@ -1,8 +1,0 @@
-program p02;
-
-begin
-    var 9.aaa   (* error sintactico en '9', no lexico en '.' 
-                    (ojo, si solo se prueba el lexico si que sale el error
-                         lexico en '.')
-
-                        *)
