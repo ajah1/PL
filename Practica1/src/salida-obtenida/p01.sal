@@ -26,7 +26,7 @@ Token: 5,17 [  -> (5,17): [ es de tipo 4
 
 Token: 5,19 1  -> (5,19): 1 es de tipo 23
 
-Token: 5,21 .  -> (5,21): . es de tipo 8
+Token: 5,20 ..  -> (5,20): .. es de tipo 8
 
 Token: 5,22 7  -> (5,22): 7 es de tipo 23
 
@@ -54,7 +54,7 @@ Token: 7,3 endvar  -> (7,3): endvar es de tipo 13
 
 Token: 9,4 a  -> (9,4): a es de tipo 22
 
-Token: 9,7 =  -> (9,7): = es de tipo 6
+Token: 9,6 :=  -> (9,6): := es de tipo 6
 
 Token: 9,9 7  -> (9,9): 7 es de tipo 23
 

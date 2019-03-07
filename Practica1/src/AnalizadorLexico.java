@@ -112,11 +112,42 @@ public class AnalizadorLexico {
 		if (e == 25) {
 			_lexema=_lexema.substring(0, _lexema.length()-1);
 			_columna--;
-		} else if (e == 6 || e == 7 || e == 9 || e == 11 || e == 12 
-				|| e == 13 || e == 15 || e == 16 || e == 17) {
+		} else if (e == 9) {
+			_lexema = ":=";
+			_columna++;
+		} else if (e == 15) {
+			_lexema = "..";
+			_columna++;	
+		}
+		else if (e == 6 || e == 7 || e == 11 || e == 12 
+				|| e == 13 || e == 16 || e == 17) {
 			_lexema = Character.toString(c);
 			_columna++;
 		}
+	}	
+	
+	public boolean errorLexico (char c) {
+		if (c == ' ' || c == '\t') {
+			++_columna;
+			++_pos;
+		} else if (c ==  '\n') {
+			_columna = 1;
+			++_pos;
+			++_fila;
+		} else if (c == (char)-1){
+			return false;
+		} else {
+			/*System.out.print("esError -->" +c+ "<--");
+			System.out.print("-->" +_fila+ "<--");
+			System.out.println("-->" +_columna+ "<--");
+            */
+			//System.out.println("lexema:"+_lexema);
+			System.err.println ("Error lexico (" +_fila+ "," 
+            					+(_columna-1)+ "): caracter '" 
+            					+_lexema+ "' incorrecto");
+            System.exit(-1);
+		}
+		return true;
 	}
 	
 	public int palabraReservada(String p_lexema) {
@@ -157,25 +188,6 @@ public class AnalizadorLexico {
 			case 24: _tipo = Token.NUMENTERO; break;
 			case 25: _tipo = Token.NUMENTERO; break;
 			default: return false;
-		}
-		return true;
-	}
-	
-	public boolean errorLexico (char c) {
-		if (c == ' ' || c == '\t') {
-			++_columna;
-			++_pos;
-		} else if (c ==  '\n') {
-			_columna = 1;
-			++_pos;
-			++_fila;
-		} else if (c == (char)-1){
-			return false;
-		} else {
-            System.err.println ("Error lexico (" +_fila+ "," 
-            					+_columna+ "): caracter '" 
-            					+c+ "' incorrecto");
-            System.exit(-1);
 		}
 		return true;
 	}
