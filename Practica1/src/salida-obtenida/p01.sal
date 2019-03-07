@@ -1,16 +1,6 @@
-interar -->p<--
-interar -->r<--
-interar -->o<--
-interar -->g<--
-interar -->r<--
-interar -->a<--
-interar -->m<--
-Token: 1,1 program  -> (1,1): program es de tipo 99
+Token: 1,0 program  -> (1,0): program es de tipo 11
 
-interar -->p<--
-interar -->0<--
-interar -->1<--
-Token: 1,10 p01  -> (1,10): p01 es de tipo 99
+Token: 1,9 p01  -> (1,9): p01 es de tipo 22
 
-Token: 1,13 ;  -> (1,13): ; es de tipo 99
+Token: 1,12 ;  -> (1,12): ; es de tipo 7
 
