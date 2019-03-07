@@ -9,7 +9,7 @@ public class AnalizadorLexico {
 	private static final char EOF = (char)-1;
 	RandomAccessFile _entrada;
 	int _fila 		= 1;
-	int _columna 	= 0;
+	int _columna 	= 1;
 	int _pos 		= 0;
 	int _tipo		= 99;
 	String _lexema 	= "";
@@ -35,9 +35,11 @@ public class AnalizadorLexico {
 		do {
 			nuevo = delta(estado,c);
 			if (nuevo == -1) {
-				//System.out.println("ENCUENTRA UN -1 --->" +c+ "<-- --->" +_fila+ "<-- --->" +_columna+ "<--");
-				if (errorLexico(c) == false) {
-					return new Token(_fila, _columna, Character.toString(c), Token.EOF);
+				/*System.out.print("esError -->" +c+ "<--");
+				System.out.print("-->" +_fila+ "<--");
+				System.out.println("-->" +_columna+ "<--");
+				*/if (errorLexico(c) == false) {
+					return new Token(_fila, _columna, _lexema, Token.EOF);
 				} else {
 					c = leerCaracter();
 					estado = 1;
@@ -46,20 +48,28 @@ public class AnalizadorLexico {
 			}
 			else if (esFinal(nuevo)) {
 				//System.out.println("ENCUENTRA FINAL --->" +c+ "<-- --->" +_fila+ "<-- --->" +_columna+ "<--");
+				
 				estado = nuevo;
+				/*System.out.print("esfinal -->" +c+ "<--");
+				System.out.print("-->e" +estado+ "<--");*/
+				
 				devolverCaracteres(nuevo, c);
-				int aux = 1;
-				if (_columna != 0) aux = (_columna - _lexema.length()-1);
-				Token t = new Token(_fila, aux, _lexema, _tipo);
+				/*System.out.print("-->" +_lexema+ "<--");
+				System.out.print("-->" +_fila+ "<--");
+				System.out.println("-->" +_columna+ "<--");
+				*/Token t;
+				//if (_lexema.length() != 1)
+				t = new Token(_fila, _columna - _lexema.length(), _lexema, _tipo);
 				_lexema = "";
 				return t;
 			} else {
 				if (nuevo == 1) _lexema = "";
 				else 			_lexema += c;
 				
-				//System.out.println("interar -->" +c+ "<--");
-				//System.out.println(Token.nombreToken.indexOf(_tipo));
-				estado = nuevo;
+				/*System.out.print("interar -->" +c+ "<--");
+				System.out.print("-->f" +_fila+ "<--");
+				System.out.println("-->c" +_columna+ "<--");
+				*/estado = nuevo;
 				c = leerCaracter();
 				++_columna;
 				++_pos;
@@ -92,20 +102,20 @@ public class AnalizadorLexico {
 				rollBack();
 		}
 		// Obtener el lexema 
-		obtenerLexema(e,c);
+		obtenerLexema(e, c);
+		//if (_lexema.length()==1) _columna++;
 		// Establecer el tipo
 		setTipo(e);
-		_columna++;
 	}
 	
 	public void obtenerLexema (int e, char c) {
-		if (e == 24)  		
-			_lexema=_lexema.substring(0, _lexema.length());
-		else if (e == 25)  	
+		if (e == 25) {
 			_lexema=_lexema.substring(0, _lexema.length()-1);
-		else if (e == 6 || e == 7 || e == 9 || e == 11 || e == 12 || 
-				e == 13 || e == 15 || e == 16 || e == 17) {
-			_lexema += c;
+			_columna--;
+		} else if (e == 6 || e == 7 || e == 9 || e == 11 || e == 12 
+				|| e == 13 || e == 15 || e == 16 || e == 17) {
+			_lexema = Character.toString(c);
+			_columna++;
 		}
 	}
 	
@@ -115,6 +125,16 @@ public class AnalizadorLexico {
 			case "div": return Token.OPMUL;
 			case "mod": return Token.OPMUL;
 			case "program": return Token.PROGRAM;
+			case "begin": return Token.BEGIN;
+			case "end": return Token.END;
+			case "integer": return Token.INTEGER;
+			case "var": return Token.VAR;
+			case "array": return Token.ARRAY;
+			case "of": return Token.OF;
+			case "real": return Token.REAL;
+			case "pointer": return Token.POINTER;
+			case "endvar": return Token.ENDVAR;
+			case "write": return Token.WRITE;
 			default: return Token.ID;
 		}
 	}
