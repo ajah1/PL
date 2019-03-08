@@ -13,7 +13,7 @@ public class AnalizadorLexico {
 	int _pos 		= 0;
 	int _tipo		= 99;
 	String _lexema 	= "";
-	int [] _finales =  {3, 6, 7, 9, 10, 11, 12, 13, 15, 16, 19, 23, 24, 25};
+	int [] _finales =  {3, 6, 7, 9, 10, 11, 12, 13, 15, 16, 17, 19, 23, 24, 25};
 	int [] _finalRol = {3, 10, 19, 23, 24, 25};
 	
 	public AnalizadorLexico(RandomAccessFile p_entrada) {
@@ -56,8 +56,8 @@ public class AnalizadorLexico {
 				devolverCaracteres(nuevo, c);
 				/*System.out.print("-->" +_lexema+ "<--");
 				System.out.print("-->" +_fila+ "<--");
-				System.out.println("-->" +_columna+ "<--");
-				*/Token t;
+				System.out.println("-->" +_columna+ "<--");*/
+				Token t;
 				//if (_lexema.length() != 1)
 				t = new Token(_fila, _columna - _lexema.length(), _lexema, _tipo);
 				_lexema = "";
@@ -68,8 +68,9 @@ public class AnalizadorLexico {
 				
 				/*System.out.print("interar -->" +c+ "<--");
 				System.out.print("-->f" +_fila+ "<--");
-				System.out.println("-->c" +_columna+ "<--");
-				*/estado = nuevo;
+				System.out.print("-->c" +_columna+ "<--");
+				System.out.println("-->e" +nuevo+ "<--");*/
+				estado = nuevo;
 				c = leerCaracter();
 				++_columna;
 				++_pos;
@@ -246,6 +247,7 @@ public class AnalizadorLexico {
 		case 23: return -1;
 		case 24: return -1;
 		case 25: return -1;
+		case 17: return -1;
 		default: return -1;
 		}
 	}
