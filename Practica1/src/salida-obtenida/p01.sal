@@ -1,83 +1,94 @@
-<<<<<<< HEAD
-=======
-Token: 1,1 program  -> (1,1): program es de tipo 11
-
-Token: 1,9 p01  -> (1,9): p01 es de tipo 22
-
-Token: 1,12 ;  -> (1,12): ; es de tipo 7
-
-Token: 3,1 begin  -> (3,1): begin es de tipo 19
-
-Token: 4,3 var  -> (4,3): var es de tipo 12
-
-Token: 4,7 a  -> (4,7): a es de tipo 22
-
-Token: 4,9 :  -> (4,9): : es de tipo 3
-
-Token: 4,11 integer  -> (4,11): integer es de tipo 14
-
-Token: 4,18 ;  -> (4,18): ; es de tipo 7
-
-Token: 5,7 b  -> (5,7): b es de tipo 22
-
-Token: 5,9 :  -> (5,9): : es de tipo 3
-
-Token: 5,11 array  -> (5,11): array es de tipo 16
-
-Token: 5,17 [  -> (5,17): [ es de tipo 4
-
-Token: 5,19 1  -> (5,19): 1 es de tipo 23
-
-Token: 5,20 ..  -> (5,20): .. es de tipo 8
-
-Token: 5,22 7  -> (5,22): 7 es de tipo 23
-
-Token: 5,24 ]  -> (5,24): ] es de tipo 5
-
-Token: 5,26 of  -> (5,26): of es de tipo 17
-
-Token: 5,29 real  -> (5,29): real es de tipo 15
-
-Token: 5,33 ;  -> (5,33): ; es de tipo 7
-
-Token: 6,7 c  -> (6,7): c es de tipo 22
-
-Token: 6,9 :  -> (6,9): : es de tipo 3
-
-Token: 6,11 pointer  -> (6,11): pointer es de tipo 18
-
-Token: 6,19 of  -> (6,19): of es de tipo 17
-
-Token: 6,22 integer  -> (6,22): integer es de tipo 14
-
-Token: 6,29 ;  -> (6,29): ; es de tipo 7
-
-Token: 7,3 endvar  -> (7,3): endvar es de tipo 13
-
-Token: 9,4 a  -> (9,4): a es de tipo 22
-
-Token: 9,6 :=  -> (9,6): := es de tipo 6
-
-Token: 9,9 7  -> (9,9): 7 es de tipo 23
-
-Token: 9,11 mOD  -> (9,11): mOD es de tipo 10
-
-Token: 9,15 b  -> (9,15): b es de tipo 22
-
-Token: 9,17 +  -> (9,17): + es de tipo 9
-
-Token: 9,19 2.3  -> (9,19): 2.3 es de tipo 24
-
-Token: 9,22 ;  -> (9,22): ; es de tipo 7
-
-Token: 10,4 write  -> (10,4): write es de tipo 21
-
-Token: 10,9 (  -> (10,9): ( es de tipo 0
-
-Token: 10,10 c  -> (10,10): c es de tipo 22
-
-Token: 10,11 )  -> (10,11): ) es de tipo 1
-
-Token: 11,1 end  -> (11,1): end es de tipo 20
-
->>>>>>> 9f03822aed123a3ee9587f25655caa25aac77e93
+TOKEN:-->program<--
+tipo-->11<--
+AÑADE LA REGLA-->1<--
+--->p01<---
+--->;<---
+--->begin<---
+AÑADE LA REGLA-->18<--
+--->var<---
+AÑADE LA REGLA-->2<--
+--->a<---
+ENTRA EN L
+AÑADE LA REGLA-->3<--
+ENTRA EN V
+AÑADE LA REGLA-->6<--
+--->:<---
+--->integer<---
+AÑADE LA REGLA-->8<--
+AÑADE LA REGLA-->15<--
+AÑADE LA REGLA-->16<--
+--->;<---
+--->b<---
+AÑADE LA REGLA-->4<--
+ENTRA EN V
+AÑADE LA REGLA-->6<--
+--->:<---
+--->array<---
+AÑADE LA REGLA-->7<--
+AÑADE LA REGLA-->9<--
+--->[<---
+--->1<---
+AÑADE LA REGLA-->10<--
+AÑADE LA REGLA-->13<--
+--->..<---
+--->7<---
+--->]<---
+AÑADE LA REGLA-->12<--
+--->of<---
+--->real<---
+AÑADE LA REGLA-->8<--
+AÑADE LA REGLA-->15<--
+AÑADE LA REGLA-->17<--
+--->;<---
+--->c<---
+AÑADE LA REGLA-->4<--
+ENTRA EN V
+AÑADE LA REGLA-->6<--
+--->:<---
+--->pointer<---
+AÑADE LA REGLA-->8<--
+AÑADE LA REGLA-->14<--
+--->of<---
+--->integer<---
+AÑADE LA REGLA-->15<--
+AÑADE LA REGLA-->16<--
+--->;<---
+--->endvar<---
+AÑADE LA REGLA-->5<--
+--->a<---
+AÑADE LA REGLA-->19<--
+AÑADE LA REGLA-->22<--
+--->:=<---
+--->7<---
+AÑADE LA REGLA-->25<--
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->31<--
+--->mOD<---
+AÑADE LA REGLA-->29<--
+--->b<---
+AÑADE LA REGLA-->33<--
+--->+<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->26<--
+--->2.3<---
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->32<--
+--->;<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->27<--
+AÑADE LA REGLA-->20<--
+--->write<---
+AÑADE LA REGLA-->23<--
+--->(<---
+--->c<---
+AÑADE LA REGLA-->25<--
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->33<--
+--->)<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->27<--
+--->end<---
+AÑADE LA REGLA-->21<--
+AÑADE LA REGLA-->21<--
+---><---
+ 1 18 2 3 6 8 15 16 4 6 7 9 10 13 12 8 15 17 4 6 8 14 15 16 5 19 22 25 28 31 29 33 30 26 28 32 30 27 20 23 25 28 33 30 27 21 21

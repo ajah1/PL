@@ -1,90 +1,104 @@
-Token: 2,1 program  -> (2,1): program es de tipo 11
-
-Token: 2,9 p06  -> (2,9): p06 es de tipo 22
-
-Token: 2,12 ;  -> (2,12): ; es de tipo 7
-
-Token: 4,1 begin  -> (4,1): begin es de tipo 19
-
-Token: 5,2 var  -> (5,2): var es de tipo 12
-
-Token: 5,6 a  -> (5,6): a es de tipo 22
-
-Token: 5,7 :  -> (5,7): : es de tipo 3
-
-Token: 5,8 integer  -> (5,8): integer es de tipo 14
-
-Token: 5,15 ;  -> (5,15): ; es de tipo 7
-
-Token: 6,2 endvar  -> (6,2): endvar es de tipo 13
-
-Token: 8,2 a  -> (8,2): a es de tipo 22
-
-Token: 8,4 :=  -> (8,4): := es de tipo 6
-
-Token: 8,7 2  -> (8,7): 2 es de tipo 23
-
-Token: 8,8 ;  -> (8,8): ; es de tipo 7
-
-Token: 9,2 a  -> (9,2): a es de tipo 22
-
-Token: 9,4 :=  -> (9,4): := es de tipo 6
-
-Token: 9,7 a  -> (9,7): a es de tipo 22
-
-Token: 9,9 +  -> (9,9): + es de tipo 9
-
-Token: 9,11 2  -> (9,11): 2 es de tipo 23
-
-Token: 9,12 ;  -> (9,12): ; es de tipo 7
-
-Token: 10,2 begin  -> (10,2): begin es de tipo 19
-
-Token: 11,8 var  -> (11,8): var es de tipo 12
-
-Token: 11,12 b  -> (11,12): b es de tipo 22
-
-Token: 11,13 :  -> (11,13): : es de tipo 3
-
-Token: 11,14 integer  -> (11,14): integer es de tipo 14
-
-Token: 11,21 ;  -> (11,21): ; es de tipo 7
-
-Token: 12,8 endvar  -> (12,8): endvar es de tipo 13
-
-Token: 14,8 begin  -> (14,8): begin es de tipo 19
-
-Token: 15,11 var  -> (15,11): var es de tipo 12
-
-Token: 15,15 c  -> (15,15): c es de tipo 22
-
-Token: 15,16 :  -> (15,16): : es de tipo 3
-
-Token: 15,17 real  -> (15,17): real es de tipo 15
-
-Token: 15,21 ;  -> (15,21): ; es de tipo 7
-
-Token: 15,23 endvar  -> (15,23): endvar es de tipo 13
-
-Token: 17,11 b  -> (17,11): b es de tipo 22
-
-Token: 17,13 :=  -> (17,13): := es de tipo 6
-
-Token: 17,16 a  -> (17,16): a es de tipo 22
-
-Token: 17,17 +  -> (17,17): + es de tipo 9
-
-Token: 17,18 3  -> (17,18): 3 es de tipo 23
-
-Token: 19,11 a  -> (19,11): a es de tipo 22
-
-Token: 19,13 :=  -> (19,13): := es de tipo 6
-
-Token: 19,16 b  -> (19,16): b es de tipo 22
-
-Token: 20,8 end  -> (20,8): end es de tipo 20
-
-Token: 21,3 end  -> (21,3): end es de tipo 20
-
-Token: 22,1 end  -> (22,1): end es de tipo 20
-
+TOKEN:-->program<--
+tipo-->11<--
+AÑADE LA REGLA-->1<--
+--->p06<---
+--->;<---
+--->begin<---
+AÑADE LA REGLA-->18<--
+--->var<---
+AÑADE LA REGLA-->2<--
+--->a<---
+ENTRA EN L
+AÑADE LA REGLA-->3<--
+ENTRA EN V
+AÑADE LA REGLA-->6<--
+--->:<---
+--->integer<---
+AÑADE LA REGLA-->8<--
+AÑADE LA REGLA-->15<--
+AÑADE LA REGLA-->16<--
+--->;<---
+--->endvar<---
+AÑADE LA REGLA-->5<--
+--->a<---
+AÑADE LA REGLA-->19<--
+AÑADE LA REGLA-->22<--
+--->:=<---
+--->2<---
+AÑADE LA REGLA-->25<--
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->31<--
+--->;<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->27<--
+AÑADE LA REGLA-->20<--
+--->a<---
+AÑADE LA REGLA-->22<--
+--->:=<---
+--->a<---
+AÑADE LA REGLA-->25<--
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->33<--
+--->+<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->26<--
+--->2<---
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->31<--
+--->;<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->27<--
+AÑADE LA REGLA-->20<--
+--->begin<---
+AÑADE LA REGLA-->24<--
+AÑADE LA REGLA-->18<--
+--->var<---
+AÑADE LA REGLA-->2<--
+--->b<---
+ENTRA EN L
+AÑADE LA REGLA-->3<--
+ENTRA EN V
+AÑADE LA REGLA-->6<--
+--->:<---
+--->integer<---
+AÑADE LA REGLA-->8<--
+AÑADE LA REGLA-->15<--
+AÑADE LA REGLA-->16<--
+--->;<---
+--->endvar<---
+AÑADE LA REGLA-->5<--
+--->begin<---
+AÑADE LA REGLA-->19<--
+AÑADE LA REGLA-->24<--
+AÑADE LA REGLA-->18<--
+--->var<---
+AÑADE LA REGLA-->2<--
+--->c<---
+ENTRA EN L
+AÑADE LA REGLA-->3<--
+ENTRA EN V
+AÑADE LA REGLA-->6<--
+--->:<---
+--->real<---
+AÑADE LA REGLA-->8<--
+AÑADE LA REGLA-->15<--
+AÑADE LA REGLA-->17<--
+--->;<---
+--->endvar<---
+AÑADE LA REGLA-->5<--
+--->b<---
+AÑADE LA REGLA-->19<--
+AÑADE LA REGLA-->22<--
+--->:=<---
+--->a<---
+AÑADE LA REGLA-->25<--
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->33<--
+--->+<---
+AÑADE LA REGLA-->30<--
+AÑADE LA REGLA-->26<--
+--->3<---
+AÑADE LA REGLA-->28<--
+AÑADE LA REGLA-->31<--
+--->a<---
+ERROR SINTACTICO

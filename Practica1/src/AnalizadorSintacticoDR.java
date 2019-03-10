@@ -10,7 +10,7 @@ public class AnalizadorSintacticoDR {
 		_lexico = p_al;
 		_flag = true;
 		_token = _lexico.siguienteToken();
-
+		_reglas = new StringBuilder();
 	}
 	
 	
@@ -18,99 +18,103 @@ public class AnalizadorSintacticoDR {
 	//
 	///////////////////////////////////////////////////////////////
 	public final void S() {
+		System.out.println("TOKEN:-->" +_token.lexema+ "<--");
+		System.out.println("tipo-->" +_token.tipo+ "<--");
 		if (_token.tipo == Token.PROGRAM) {
+			addR(S);
 			e(Token.PROGRAM);
 			e(Token.ID);
 			e(Token.PYC);
 			B();
-			addR(S);
 		} else {
 			es(Token.PROGRAM);
 		}
 	}
 	public final void D() {
 		if (_token.tipo == Token.VAR) {
+			addR(D);
 			e(Token.VAR);
 			L();
 			e(Token.ENDVAR);
-			addR(D);
 		} else {
 			es(Token.VAR);
 		}
 	}
 	public final void L() {
+		System.out.println("ENTRA EN L");
 		if (_token.tipo == Token.ID) {
+			addR(L);
 			V();
 			Lp();
-			addR(L);
 		} else {
 			es(Token.ID);
 		}
 	}
 	public final void Lp() {	//////// EPSILON ////////
 		if (_token.tipo == Token.ID) {
+			addR(LP1);
 			V();
 			Lp();
-			addR(LP1);
 		} else if (_token.tipo == Token.ENDVAR) {
 			// REGLA PARA VACIO
-			addR(LP1);
+			addR(LP2);
 		} else {
 			es(Token.ID, Token.ENDVAR);
 		}
 	}
 	public final void V() {
+		System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
+			addR(V);
 			e(Token.ID);
 			e(Token.DOSP);
 			C();
 			e(Token.PYC);
-			addR(V);
 		} else {
 			es(Token.ID);
 		}
 	}
 	public final void C() {
 		if (_token.tipo == Token.ARRAY) {
+			addR(C1);
 			A();
 			C();
-			addR(C1);
 		} else if (_token.tipo == Token.POINTER 
 				|| _token.tipo == Token.INTEGER
 				|| _token.tipo == Token.REAL) {
-			P();
 			addR(C2);
+			P();
 		} else {
 			es(Token.ARRAY, Token.POINTER, Token.INTEGER, Token.REAL );
 		}
 	}
 	public final void A() {
 		if (_token.tipo == Token.ARRAY) {
+			addR(A);
 			e(Token.ARRAY);
 			e(Token.CORI);
 			R();
 			e(Token.CORD);
 			e(Token.OF);
-			addR(A);
 		} else {
 			es(Token.ARRAY);
 		}
 	}
 	public final void R() {
 		if (_token.tipo == Token.NUMENTERO) {
+			addR(R);
 			G();
 			Rp();
-			addR(R);
 		} else {
 			es(Token.NUMENTERO);
 		}
 	}
 	public final void Rp() {	//////// EPSILON ////////
 		if (_token.tipo == Token.COMA) {
+			addR(RP1);
 			e(Token.COMA);
 			G();
 			Rp();
-			addR(RP1);
 		} if (_token.tipo == Token.CORD) {
 			// REGLA PARA VACIO
 			addR(RP2);
@@ -120,45 +124,45 @@ public class AnalizadorSintacticoDR {
 	}
 	public final void G() {
 		if (_token.tipo == Token.NUMENTERO) {
+			addR(G);
 			e(Token.NUMENTERO);
 			e(Token.PTOPTO);
 			e(Token.NUMENTERO);
-			addR(G);
 		} else {
 			es(Token.NUMENTERO);
 		}
 	}
 	public final void P() {		//////// EPSILON ////////
 		if (_token.tipo == Token.POINTER) {
+			addR(P1);
 			e(Token.POINTER);
 			e(Token.OF);
 			P();
-			addR(P1);
 		} else if (_token.tipo == Token.INTEGER || _token.tipo == Token.REAL) {
-			Tipo();
 			addR(P2);
+			Tipo();
 		} else {
 			es(Token.POINTER, Token.INTEGER, Token.REAL);
 		}
 	}
 	public final void Tipo() {
 		if (_token.tipo == Token.INTEGER ) {
-			e(Token.INTEGER);
 			addR(TIPO1);
+			e(Token.INTEGER);
 		} else if (_token.tipo == Token.REAL) {
-			e(Token.REAL);
 			addR(TIPO2);
+			e(Token.REAL);
 		} else {
 			es(Token.INTEGER, Token.REAL);
 		}
 	}
 	public final void B() {
 		if (_token.tipo == Token.BEGIN ) {
+			addR(B);
 			e(Token.BEGIN);
 			D();
 			SI();
 			e(Token.END);
-			addR(B);
 		} else {
 			es(Token.BEGIN);
 		}
@@ -167,19 +171,19 @@ public class AnalizadorSintacticoDR {
 		if (_token.tipo == Token.ID 
 				|| _token.tipo == Token.WRITE 
 				|| _token.tipo == Token.BEGIN) {
+			addR(SI);
 			I();
 			M();
-			addR(SI);
 		} else {
 			es(Token.ID, Token.WRITE, Token.BEGIN);
 		}
 	}
 	public final void M() {		//////// EPSILON ////////
 		if (_token.tipo == Token.PYC) {
-			e(Token.PYC);
-			M();
-			I();
 			addR(M1);
+			e(Token.PYC);
+			I();
+			M();
 		} if (_token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(M2);
@@ -189,19 +193,19 @@ public class AnalizadorSintacticoDR {
 	}
 	public final void I() {
 		if (_token.tipo == Token.ID) {
+			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
 			E();
-			addR(I1);
 		} else if (_token.tipo == Token.WRITE) {
+			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
 			E();
 			e(Token.PARD);
-			addR(I2);
 		} else if (_token.tipo == Token.BEGIN) {
-			B();
 			addR(I3);
+			B();
 		} else {
 			es(Token.ID, Token.WRITE, Token.BEGIN);
 		}
@@ -210,19 +214,19 @@ public class AnalizadorSintacticoDR {
 		if (_token.tipo == Token.NUMENTERO 
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
+			addR(E);
 			T();
 			Ep();
-			addR(E);
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 	}
 	public final void Ep() {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPAS) {
+			addR(EP1);
 			e(Token.OPAS);
 			T();
 			Ep();
-			addR(EP1);
 		} else if (_token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
 				|| _token.tipo == Token.END) {
@@ -236,20 +240,20 @@ public class AnalizadorSintacticoDR {
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
-			e(Token.OPMUL);
+			addR(T);
+			//e(Token.OPMUL);
 			F();
 			Tp();
-			addR(T);
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
 	}
 	public final void Tp() {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPMUL) {
+			addR(TP1);
 			e(Token.OPMUL);
 			F();
 			Tp();
-			addR(TP1);
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
@@ -262,16 +266,16 @@ public class AnalizadorSintacticoDR {
 	}
 	public final void F() {		//////// EPSILON ////////
 		if (_token.tipo == Token.NUMENTERO) {
-			e(Token.NUMENTERO);
 			addR(F1);
+			e(Token.NUMENTERO);
 		} else if (_token.tipo == Token.NUMREAL) {
-			e(Token.NUMREAL);
 			addR(F2);
+			e(Token.NUMREAL);
 		} else if (_token.tipo == Token.ID) {
-			e(Token.ID);
 			addR(F3);
+			e(Token.ID);
 		} else {
-			es(Token.NUMREAL, Token.NUMENTERO, Token.ID);
+			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 	}
 	
@@ -279,14 +283,18 @@ public class AnalizadorSintacticoDR {
 	//
 	///////////////////////////////////////////////////////////////
 	public final void e(int tokEsperado) {
-		if (_token.tipo == tokEsperado)
+		//System.out.print("EMPAREJAR:-->" +tokEsperado);
+		if (_token.tipo == tokEsperado) {
 			_token = _lexico.siguienteToken();
+			System.out.println("--->" +_token.lexema+ "<---");	
+		}
 		else {
 			es(tokEsperado);
 		}
 	}
 
 	public void es(int ... args) {
+		System.out.println("ERROR SINTACTICO");
         if (_token.tipo == Token.EOF) {
             System.err.print(
             	"Error sintactico: encontrado fin de fichero, esperaba");
@@ -313,6 +321,7 @@ public class AnalizadorSintacticoDR {
 	}
 	
 	public void addR (int p_r) {
+		System.out.println("AÑADE LA REGLA-->" +p_r+ "<--");
 		_reglas.append(" ").append(p_r);
 	}
 	

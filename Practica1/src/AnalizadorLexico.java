@@ -65,16 +65,11 @@ public class AnalizadorLexico {
 			} else {
 				if (nuevo == 1) _lexema = "";
 				else 			_lexema += c;
-				
-<<<<<<< HEAD
-				//System.out.println("iterar -->" +c+ "<--");
-				//System.out.println(Token.nombreToken.indexOf(_tipo));
-=======
+
 				/*System.out.print("interar -->" +c+ "<--");
 				System.out.print("-->f" +_fila+ "<--");
 				System.out.print("-->c" +_columna+ "<--");
 				System.out.println("-->e" +nuevo+ "<--");*/
->>>>>>> 9f03822aed123a3ee9587f25655caa25aac77e93
 				estado = nuevo;
 				c = leerCaracter();
 				++_columna;
