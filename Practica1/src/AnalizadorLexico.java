@@ -57,7 +57,7 @@ public class AnalizadorLexico {
 				if (nuevo == 1) _lexema = "";
 				else 			_lexema += c;
 				
-				//System.out.println("interar -->" +c+ "<--");
+				//System.out.println("iterar -->" +c+ "<--");
 				//System.out.println(Token.nombreToken.indexOf(_tipo));
 				estado = nuevo;
 				c = leerCaracter();
@@ -228,5 +228,4 @@ public class AnalizadorLexico {
         } catch (IOException e) { }
         return ' ';
     }
-    
 }
