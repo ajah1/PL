@@ -1,0 +1,11 @@
+program p01;
+
+begin
+  var a : integer;
+      b : real;
+      c : integer;
+  endvar
+
+   a := 7 - b + 2.3;
+   write(c)
+end
