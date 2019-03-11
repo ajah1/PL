@@ -18,8 +18,6 @@ public class AnalizadorSintacticoDR {
 	//
 	///////////////////////////////////////////////////////////////
 	public final void S() {
-		System.out.println("TOKEN:-->" +_token.lexema+ "<--");
-		System.out.println("tipo-->" +_token.tipo+ "<--");
 		if (_token.tipo == Token.PROGRAM) {
 			addR(S);
 			e(Token.PROGRAM);
@@ -41,7 +39,7 @@ public class AnalizadorSintacticoDR {
 		}
 	}
 	public final void L() {
-		System.out.println("ENTRA EN L");
+		//System.out.println("ENTRA EN L");
 		if (_token.tipo == Token.ID) {
 			addR(L);
 			V();
@@ -63,7 +61,7 @@ public class AnalizadorSintacticoDR {
 		}
 	}
 	public final void V() {
-		System.out.println("ENTRA EN V");
+		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
 			addR(V);
 			e(Token.ID);
@@ -119,7 +117,7 @@ public class AnalizadorSintacticoDR {
 			// REGLA PARA VACIO
 			addR(RP2);
 		} else {
-			es(Token.COMA, Token.CORD);
+			es(Token.CORD, Token.COMA);
 		}
 	}
 	public final void G() {
@@ -179,6 +177,7 @@ public class AnalizadorSintacticoDR {
 		}
 	}
 	public final void M() {		//////// EPSILON ////////
+		//System.out.println("M");
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
 			e(Token.PYC);
@@ -188,7 +187,7 @@ public class AnalizadorSintacticoDR {
 			// REGLA VACIO
 			addR(M2);
 		}else {
-			es(Token.PYC);
+			es(Token.PYC, Token.END);
 		}
 	}
 	public final void I() {
@@ -207,7 +206,7 @@ public class AnalizadorSintacticoDR {
 			addR(I3);
 			B();
 		} else {
-			es(Token.ID, Token.WRITE, Token.BEGIN);
+			es(Token.ID,Token.BEGIN, Token.WRITE);
 		}
 	}
 	public final void E() {
@@ -261,7 +260,7 @@ public class AnalizadorSintacticoDR {
 			// REGLA VACIO
 			addR(TP2);
 		} else {
-			es(Token.OPMUL, Token.OPAS, Token.ID, Token.PYC, Token.END);
+			es(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
 		}
 	}
 	public final void F() {		//////// EPSILON ////////
@@ -286,7 +285,7 @@ public class AnalizadorSintacticoDR {
 		//System.out.print("EMPAREJAR:-->" +tokEsperado);
 		if (_token.tipo == tokEsperado) {
 			_token = _lexico.siguienteToken();
-			System.out.println("--->" +_token.lexema+ "<---");	
+			//System.out.println("--->" +_token.lexema+ "<---");	
 		}
 		else {
 			es(tokEsperado);
@@ -294,12 +293,12 @@ public class AnalizadorSintacticoDR {
 	}
 
 	public void es(int ... args) {
-		System.out.println("ERROR SINTACTICO");
+		//System.out.println("ERROR SINTACTICO");
         if (_token.tipo == Token.EOF) {
             System.err.print(
             	"Error sintactico: encontrado fin de fichero, esperaba");
         } else {
-            System.err.print("Error sintactico"
+            System.err.print("Error sintactico "
             	+"("+_token.fila+"," +_token.columna+ "):"
             	+" encontrado '" +_token.lexema+ "', esperaba");
         }
@@ -321,7 +320,7 @@ public class AnalizadorSintacticoDR {
 	}
 	
 	public void addR (int p_r) {
-		System.out.println("AÑADE LA REGLA-->" +p_r+ "<--");
+		//System.out.println("AÑADE LA REGLA-->" +p_r+ "<--" +_token.lexema);
 		_reglas.append(" ").append(p_r);
 	}
 	

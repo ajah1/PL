@@ -1,0 +1,22 @@
+program pc07;
+
+begin
+  var 
+     a : integer;
+     b : real;
+     c : pointer of integer;
+     d : pointer of pointer of integer;
+     e : array [1..4,2..5,3..6,4..7] of real;
+     f : array [100..105,200..201] of integer;
+     ascii : array[127..255]of integer;
+  endvar
+
+  begin var i:integer; endvar
+    a := 7
+  end;
+
+  write(2+4*5-a DIV 2);
+  a := 37 MOD 30 DIV 2;
+  b := a/2
+end
+  

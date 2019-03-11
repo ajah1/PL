@@ -36,9 +36,10 @@ public class AnalizadorLexico {
 			nuevo = delta(estado,c);
 			if (nuevo == -1) {
 				/*System.out.print("esError -->" +c+ "<--");
+				System.out.print("-->" +_lexema+ "<--");
 				System.out.print("-->" +_fila+ "<--");
-				System.out.println("-->" +_columna+ "<--");
-				*/if (errorLexico(c) == false) {
+				System.out.println("-->" +_columna+ "<--");*/
+				if (errorLexico(c) == false) {
 					return new Token(_fila, _columna, _lexema, Token.EOF);
 				} else {
 					c = leerCaracter();
@@ -57,9 +58,7 @@ public class AnalizadorLexico {
 				/*System.out.print("-->" +_lexema+ "<--");
 				System.out.print("-->" +_fila+ "<--");
 				System.out.println("-->" +_columna+ "<--");*/
-				Token t;
-				//if (_lexema.length() != 1)
-				t = new Token(_fila, _columna - _lexema.length(), _lexema, _tipo);
+				Token t = new Token(_fila, _columna - _lexema.length(), _lexema, _tipo);
 				_lexema = "";
 				return t;
 			} else {
