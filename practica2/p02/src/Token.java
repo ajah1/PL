@@ -8,6 +8,17 @@ public class Token {
 	public String lexema;
 	public static final ArrayList<String> nombreToken = new ArrayList<String>();
 
+	public Token() {
+		lexema 	= "";
+		tipo 	= 1;
+	}
+	public Token(int p_f, int p_c, String p_lexema, int p_tipo) {
+		fila 	= p_f;
+		columna = p_c;
+		lexema 	= p_lexema;
+		tipo 	= p_tipo;
+	}
+	
 	static{
 		nombreToken.add("(");
 		nombreToken.add(")");
