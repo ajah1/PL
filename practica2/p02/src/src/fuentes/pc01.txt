@@ -1,0 +1,10 @@
+program pc01;
+begin
+
+  var a integer;
+
+    (* ANTES -> error sintactico en 'array' *)
+    (* AHORA -> error sintactico en 'integer' *)
+
+
+end

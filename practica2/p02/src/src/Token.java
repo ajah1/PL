@@ -45,22 +45,22 @@ public class Token {
 	public static final int
 		PARI 		= 0,
 		PARD		= 1,
-		DOSP            = 2,
+		DOSP        = 2,
 		ASIG		= 3,
-		PYC		= 4,
+		PYC			= 4,
 		OPAS		= 5,
 		PROGRAM		= 6,
-		VAR		= 7,
+		VAR			= 7,
 		ENDVAR		= 8,
 		INTEGER		= 9,
 		REAL		= 10,
 		BEGIN		= 11,
-		END		= 12,
+		END			= 12,
 		WRITE		= 13,
-		ID		= 14,
+		ID			= 14,
 		NUMENTERO	= 15,
 		NUMREAL		= 16,
-		EOF		= 17;
+		EOF			= 17;
 
 	public String toString(){
 	        return nombreToken.get(tipo);

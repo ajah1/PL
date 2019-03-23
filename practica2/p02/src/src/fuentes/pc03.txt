@@ -1,0 +1,13 @@
+program pc03;
+
+begin
+
+   var i : integer;
+       m : real;
+   endvar
+
+   i := 3;
+   write(i)
+end;
+
+  (* Error sintactico (11,4): econtrado ';', esperaba fin de fichero *)

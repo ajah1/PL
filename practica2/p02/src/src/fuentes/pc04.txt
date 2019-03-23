@@ -1,0 +1,8 @@
+program pc04;
+
+begin
+
+  var a : bastacpc;
+
+  (* ANTES -> error sintactico en 'of'  *)
+  (* AHORA -> no da error  *)

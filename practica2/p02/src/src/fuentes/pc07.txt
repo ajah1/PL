@@ -1,0 +1,22 @@
+program pc07;
+
+begin
+  var 
+     a : integer;
+     b : real;
+     c : integer;
+     d : integer;
+     e : real;
+     f : integer;
+     ascii : integer;
+  endvar
+
+  begin var i:integer; endvar
+    a := 7
+  end;
+
+  write(2+4-a);
+  a := 37;
+  b := a
+end
+  

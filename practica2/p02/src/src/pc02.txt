@@ -1,0 +1,7 @@
+program pc02;
+
+begin
+
+  (* comentario que no termina:
+
+     Error lexico: fin de fichero inesperado

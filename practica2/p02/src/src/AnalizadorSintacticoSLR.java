@@ -7,11 +7,12 @@ public class AnalizadorSintacticoSLR {
 	AnalizadorLexico _l;
 	int _filas 		= 38;
 	int _columnas 	= 18;
-	Stack<String> _pila;
+	Stack<String> _pila, _reglas;
 	
 	public AnalizadorSintacticoSLR (AnalizadorLexico p_l) {
 		_l = p_l;
 		_pila = new Stack<String>();
+		_reglas = new Stack<String>();
 		inicializarTabla();
 	}
 	
@@ -39,14 +40,14 @@ public class AnalizadorSintacticoSLR {
 			s = _pila.lastElement();
 //			SI Accion[s, a] = dj ENTONCES
 			aux = Accion(s, a);
-			System.out.print("aux: " +aux);
+			//System.out.print("aux: " +aux);
 			tipo 	= Character.toString(aux.charAt(0));
 			valor 	= aux.substring(1,aux.length());
 			// valor puede tener mas de un digito
 			if (valor == "1") valor += Character.toString(aux.charAt(2));
 			
-			System.out.print("  tipo: " +tipo+ "   valor: " +valor);
-			System.out.println("   lexema: " +a.lexema);
+			/*System.out.print("  tipo: " +tipo+ "   valor: " +valor);
+			System.out.println("   lexema: " +a.lexema);*/
 			if (tipo.equals("s")) {
 //				push(j)
 				_pila.push(valor);
@@ -71,11 +72,21 @@ public class AnalizadorSintacticoSLR {
 				error(a, s);
 			}
 		}
+		ImprimirReglas();
+	}
+	
+	public void ImprimirReglas() {
+		for (int i = _reglas.size()-1; i >= 0; --i) {
+			System.out.print(_reglas.get(i) + " ");
+		}
 	}
 	
 	public String Desapilar (String p_estado) {
+		
 		int e = Integer.valueOf(p_estado);
 		int pop = 10000;
+		
+		_reglas.push(p_estado);
 		
 		if (e == 4||e == 6||e == 7||e == 10||e == 13||
 				e == 15||e == 16||e == 17||e == 18) {
@@ -88,7 +99,7 @@ public class AnalizadorSintacticoSLR {
 			pop = 4;
 		}
 		
-		System.out.println("pila.size(): " +_pila.size() +"  desapilar: " +pop);
+		//System.out.println("pila.size(): " +_pila.size() +"  desapilar: " +pop);
 		for (int i = 0; i < pop; ++i) { _pila.pop(); }
 		
 		// Dada la K, devuelve la parte izquierda (el no terminal)
@@ -130,8 +141,8 @@ public class AnalizadorSintacticoSLR {
 		case "I": 	return I;
 		case "E": 	return E;
 		case "F": 	return F;
+		default: return 10000;
 		}
-		return 10000;
 	}
 	public String ConvIzq (int k) {
 		switch (k) {
@@ -153,8 +164,8 @@ public class AnalizadorSintacticoSLR {
 		case 16: return "F";
 		case 17: return "F";
 		case 18: return "F";
+		default: return "10000";
 		}
-		return "10000";
 	}
 	
 	public void inicializarTabla () {
@@ -212,7 +223,7 @@ public class AnalizadorSintacticoSLR {
 		_lr[27][pyc] 	= "r16";_lr[27][end] = "r16";_lr[27][pard] = "r16";_lr[27][opas] = "r16";
 		_lr[28][pyc] 	= "r17";_lr[28][end] = "r17";_lr[28][pard] = "r17";_lr[28][opas] = "r17";
 		_lr[29][pyc] 	= "r18";_lr[29][end] = "r18";_lr[29][pard] = "r18";_lr[29][opas] = "r18";
-		_lr[30][pari] 	= "s35";_lr[30][pard] = "s34";
+		_lr[30][pard] 	= "s35";_lr[30][opas] = "s34";
 		_lr[31][pyc] 	= "s36";
 		_lr[32][pyc] 	= "r6";
 		_lr[33][pyc] 	= "r7";
