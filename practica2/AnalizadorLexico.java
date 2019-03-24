@@ -203,6 +203,7 @@ public class AnalizadorLexico {
 		case 2: if (c=='*') return 4;
 				else 		return 3;
 		case 4: if (c=='*') return 5;
+				if (c==EOF) {System.err.print("Error lexico: fin de fichero inesperado\n");System.exit(-1);}
 				else		return 4;
 		case 5: if (c==')') return 1;
 				else		return 5;

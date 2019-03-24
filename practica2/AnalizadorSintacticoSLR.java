@@ -170,11 +170,11 @@ public class AnalizadorSintacticoSLR {
 	
 	public void inicializarTabla () {
 		_ir = new int[_filas][10];
-		/*for (int i = 0; i < _filas; ++i) {
+		for (int i = 0; i < _filas; ++i) {
 			for (int j = 0; j < 10; ++j) {
 				_ir[i][j] = 10000;
 			}
-		}*/
+		}
 		_ir[0][S] 	= 1;
 		_ir[4][B] 	= 5;
 		_ir[6][D] 	= 7;
