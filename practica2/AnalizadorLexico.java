@@ -137,6 +137,7 @@ public class AnalizadorLexico {
 		} else if (c == (char)-1){
 			return false;
 		} else {
+			if (c == ',') {_columna++; _lexema=",";}
 			/*System.out.print("esError -->" +c+ "<--");
 			System.out.print("-->" +_fila+ "<--");
 			System.out.println("-->" +_columna+ "<--");
@@ -188,10 +189,10 @@ public class AnalizadorLexico {
 		case 1:
 			if (c=='(') return 2;
 			else if (c==')') return 6;
-			else if (c==',') return 7;
+			//else if (c==',') return 7;
 			else if (c==':') return 8;
-			else if (c=='[') return 11;
-			else if (c==']') return 12;
+			//else if (c=='[') return 11;
+			//else if (c==']') return 12;
 			else if (c==';') return 13;
 			else if (c=='.') return 14;
 			else if (c=='+' || c=='-') return 16;

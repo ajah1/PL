@@ -1,1 +1,1 @@
-Error sintactico (7,10): encontrado ',', esperaba numero entero numero real identificador 
+Error lexico (7,10): caracter ',' incorrecto
