@@ -1,0 +1,9 @@
+program pc04;
+
+begin
+
+  var a : real; endvar
+
+  write ( a+3-5;
+
+  (* error sintactico en ';'  *)

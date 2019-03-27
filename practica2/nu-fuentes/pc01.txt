@@ -1,0 +1,8 @@
+program pc01;
+begin
+
+  var a integer;
+
+    (* error sintactico en 'integer' *)
+
+end

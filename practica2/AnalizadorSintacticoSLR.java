@@ -315,7 +315,7 @@ public class AnalizadorSintacticoSLR {
 		case 27: printError(p_a, new int[]{Token.PARD, Token.PYC,  Token.OPAS, Token.END});
 		case 28: printError(p_a, new int[]{Token.PARD, Token.PYC,  Token.OPAS, Token.END});
 		case 29: printError(p_a, new int[]{Token.PARD, Token.PYC,  Token.OPAS, Token.END});
-		case 30: printError(p_a, new int[]{Token.PARI});
+		case 30: printError(p_a, new int[]{Token.PARD, Token.OPAS});
 		case 31: printError(p_a, new int[]{Token.PYC});
 		case 32: printError(p_a, new int[]{Token.PYC});
 		case 33: printError(p_a, new int[]{Token.PYC});
