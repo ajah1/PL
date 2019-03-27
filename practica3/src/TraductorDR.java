@@ -1,12 +1,12 @@
 
-public class TraductorDR {
+public class AnalizadorSintacticoDR {
 
 	boolean _flag = false;
 	AnalizadorLexico _lexico = null;
 	Token _token = null;
 	StringBuilder _reglas;
 	
-	public TraductorDR(AnalizadorLexico p_al) {
+	public AnalizadorSintacticoDR(AnalizadorLexico p_al) {
 		_lexico = p_al;
 		_flag = true;
 		_token = _lexico.siguienteToken();
@@ -281,7 +281,6 @@ public class TraductorDR {
 	///////////////////////////////////////////////////////////////
 	//
 	///////////////////////////////////////////////////////////////
-	
 	private final int ERRYADECL=1,ERRNOSIMPLE=2,ERRNODECL=3,ERRTIPOS=4,ERRNOENTEROIZQ=5,ERRNOENTERODER=6,ERRRANGO=7;
 	private void errorSemantico(int nerror,Token tok)
 	{
@@ -300,8 +299,7 @@ public class TraductorDR {
 		System.exit(-1);
 	}
 
-
-
+	
 	public final void e(int tokEsperado) {
 		//System.out.print("EMPAREJAR:-->" +tokEsperado);
 		if (_token.tipo == tokEsperado) {
