@@ -1,12 +1,12 @@
 
-public class AnalizadorSintacticoDR {
+public class TraductorDR {
 
 	boolean _flag = false;
 	AnalizadorLexico _lexico = null;
 	Token _token = null;
 	StringBuilder _reglas;
 	
-	public AnalizadorSintacticoDR(AnalizadorLexico p_al) {
+	public TraductorDR(AnalizadorLexico p_al) {
 		_lexico = p_al;
 		_flag = true;
 		_token = _lexico.siguienteToken();
@@ -381,15 +381,3 @@ public class AnalizadorSintacticoDR {
 		F2 	= 32,
 		F3 	= 33;
 }
-
-
-
-
-
-
-
-
-
-
-
-
