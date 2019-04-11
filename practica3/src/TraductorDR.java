@@ -1,6 +1,16 @@
 
 public class TraductorDR {
 
+	public class Pair<Ti, Td> {
+		public  Ti _ti;
+		public  Td _td;
+		
+		public Pair (Ti ti, Td td) {
+			_ti = ti;
+			_td = td;
+		}
+	}
+	
 	boolean _flag = false;
 	AnalizadorLexico _lexico = null;
 	Token _token = null;
@@ -17,155 +27,204 @@ public class TraductorDR {
 	///////////////////////////////////////////////////////////////
 	//
 	///////////////////////////////////////////////////////////////
-	public final void S() {
+	public final String S() { // S −→ program id pyc B
 		if (_token.tipo == Token.PROGRAM) {
 			addR(S);
 			e(Token.PROGRAM);
 			e(Token.ID);
 			e(Token.PYC);
-			B();
+			return "int main()\n{\n" + B();
 		} else {
 			es(Token.PROGRAM);
 		}
+		return "S";
 	}
-	public final void D() {
+	public final String D() { // D −→ var L endvar
 		if (_token.tipo == Token.VAR) {
 			addR(D);
 			e(Token.VAR);
-			L();
+			String ltrad = L();
 			e(Token.ENDVAR);
+			return ltrad;
 		} else {
 			es(Token.VAR);
 		}
+		return "D";
 	}
-	public final void L() {
+	public final String L() { // L −→ V Lp 
 		//System.out.println("ENTRA EN L");
 		if (_token.tipo == Token.ID) {
 			addR(L);
-			V();
-			Lp();
+			return V() + Lp();
 		} else {
 			es(Token.ID);
 		}
+		return "L";
 	}
-	public final void Lp() {	//////// EPSILON ////////
+	public final String Lp() {	//////// EPSILON //////// Lp −→ V Lp¡
 		if (_token.tipo == Token.ID) {
 			addR(LP1);
-			V();
-			Lp();
+			return V() + Lp();
 		} else if (_token.tipo == Token.ENDVAR) {
 			// REGLA PARA VACIO
 			addR(LP2);
+			return "";
 		} else {
 			es(Token.ID, Token.ENDVAR);
 		}
+		return "Lp";
 	}
-	public final void V() {
+	public final String V() { // V −→ id dosp C pyc 
 		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
 			addR(V);
+			String tlexema = _token.lexema;
 			e(Token.ID);
 			e(Token.DOSP);
-			C();
+			String [] ctrad = C().split("@");
+			/*System.out.println("split de tradc size: " + ctrad.length);
+			for (String s : ctrad) {
+				System.out.print(" " + s);
+			}*/
 			e(Token.PYC);
+			if (ctrad.length == 1)
+				return ctrad[0] + " " + tlexema +  ";\n";
+			else {
+				String out = ctrad[0] + " "+ tlexema;// + ctrad[1] +  
+				for (int i = ctrad.length-1 ; i >= 1; --i) out += ctrad[i];
+				return out + ";\n";
+			}
+				
 		} else {
 			es(Token.ID);
 		}
+		return "V";
 	}
-	public final void C() {
+	public final String C() {
+		// C −→ A C 
+		// C −→ P
 		if (_token.tipo == Token.ARRAY) {
 			addR(C1);
-			A();
-			C();
+			String atrad = A();
+			String ctrad = C();
+			//System.out.println("A:  " + atrad + "  C:  " + ctrad);
+			
+			return ctrad +"@"+ atrad;
 		} else if (_token.tipo == Token.POINTER 
 				|| _token.tipo == Token.INTEGER
 				|| _token.tipo == Token.REAL) {
 			addR(C2);
-			P();
+			return P();
 		} else {
 			es(Token.ARRAY, Token.POINTER, Token.INTEGER, Token.REAL );
 		}
+		return "C";
 	}
-	public final void A() {
+	public final String A() { // A −→ array cori R cord of 
 		if (_token.tipo == Token.ARRAY) {
 			addR(A);
 			e(Token.ARRAY);
 			e(Token.CORI);
-			R();
+			String rtrad = R();
 			e(Token.CORD);
 			e(Token.OF);
+			return rtrad;
 		} else {
 			es(Token.ARRAY);
 		}
+		return "A";
 	}
-	public final void R() {
+	public final String R() { // R −→ G Rp 
 		if (_token.tipo == Token.NUMENTERO) {
 			addR(R);
-			G();
-			Rp();
+			String gtrad = G();
+			String rptrad =  Rp();
+			//System.out.println("R -> G: " + gtrad + " " + rptrad);
+			return gtrad +rptrad;
 		} else {
 			es(Token.NUMENTERO);
 		}
+		return "R";
 	}
-	public final void Rp() {	//////// EPSILON ////////
+	public final String Rp() {	//////// EPSILON //////// Rp −→ coma G Rp 
 		if (_token.tipo == Token.COMA) {
 			addR(RP1);
 			e(Token.COMA);
-			G();
-			Rp();
+			//G();
+			//Rp();
+			//return gtrad + rptrad;
+			return G() + Rp();
 		} if (_token.tipo == Token.CORD) {
 			// REGLA PARA VACIO
 			addR(RP2);
+			return "";
 		} else {
 			es(Token.CORD, Token.COMA);
 		}
+		return "Rp";
 	}
-	public final void G() {
+	public final String G() { // G −→ numentero ptopto numentero
 		if (_token.tipo == Token.NUMENTERO) {
+			String nizq = _token.lexema;
 			addR(G);
 			e(Token.NUMENTERO);
 			e(Token.PTOPTO);
+			String nder = _token.lexema;
 			e(Token.NUMENTERO);
+			int izq = Integer.parseInt(nizq);
+			int der = Integer.parseInt(nder);
+			Integer res = der - izq + 1;
+			//System.out.println(izq + " " + der);
+			return "["+String.valueOf(res)+"]";
 		} else {
 			es(Token.NUMENTERO);
 		}
+		return "G";
 	}
-	public final void P() {		//////// EPSILON ////////
+	public final String P() {
+		// P −→ pointer of P 
+		// P −→ Tipo 
 		if (_token.tipo == Token.POINTER) {
 			addR(P1);
 			e(Token.POINTER);
 			e(Token.OF);
-			P();
+			return  P() + "*";
 		} else if (_token.tipo == Token.INTEGER || _token.tipo == Token.REAL) {
 			addR(P2);
-			Tipo();
+			return Tipo();
 		} else {
 			es(Token.POINTER, Token.INTEGER, Token.REAL);
 		}
+		return "P";
 	}
-	public final void Tipo() {
+	public final String Tipo() {
 		if (_token.tipo == Token.INTEGER ) {
 			addR(TIPO1);
 			e(Token.INTEGER);
+			return "int";
 		} else if (_token.tipo == Token.REAL) {
 			addR(TIPO2);
 			e(Token.REAL);
+			return "float";
 		} else {
 			es(Token.INTEGER, Token.REAL);
 		}
+		return "Tipo";
 	}
-	public final void B() {
+	public final String B() { // B −→ begin D SI end 
 		if (_token.tipo == Token.BEGIN ) {
 			addR(B);
 			e(Token.BEGIN);
-			D();
-			SI();
+			String dtrad = D();
+			String sitrad = SI();
 			e(Token.END);
+			return dtrad + sitrad;
 		} else {
 			es(Token.BEGIN);
 		}
+		return "B";
 	}
-	public final void SI() {
+	public final String SI() { // SI −→ I M 
 		if (_token.tipo == Token.ID 
 				|| _token.tipo == Token.WRITE 
 				|| _token.tipo == Token.BEGIN) {
@@ -175,8 +234,9 @@ public class TraductorDR {
 		} else {
 			es(Token.ID, Token.WRITE, Token.BEGIN);
 		}
+		return "SI";
 	}
-	public final void M() {		//////// EPSILON ////////
+	public final String M() {		//////// EPSILON //////// M −→ pyc I M 
 		//System.out.println("M");
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
@@ -189,8 +249,14 @@ public class TraductorDR {
 		}else {
 			es(Token.PYC, Token.END);
 		}
+		return "M";
 	}
-	public final void I() {
+	public final String I() {
+		/*
+		 * I −→ id asig E 
+		 * I −→ write pari E pard 
+		 * I −→ B 
+		*/ 
 		if (_token.tipo == Token.ID) {
 			addR(I1);
 			e(Token.ID);
@@ -208,8 +274,9 @@ public class TraductorDR {
 		} else {
 			es(Token.ID,Token.BEGIN, Token.WRITE);
 		}
+		return "I";
 	}
-	public final void E() {
+	public final String E() { // E −→ T Ep 
 		if (_token.tipo == Token.NUMENTERO 
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
@@ -219,8 +286,9 @@ public class TraductorDR {
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
+		return "E";
 	}
-	public final void Ep() {	//////// EPSILON ////////
+	public final String Ep() {	//////// EPSILON //////// Ep −→ opas T Ep 
 		if (_token.tipo == Token.OPAS) {
 			addR(EP1);
 			e(Token.OPAS);
@@ -234,8 +302,9 @@ public class TraductorDR {
 		} else {
 			es(Token.OPAS, Token.PARD, Token.PYC, Token.END);
 		}
+		return "Ep";
 	}
-	public final void T() {		//////// EPSILON ////////
+	public final String T() {	// T −→ F Tp 
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
@@ -246,8 +315,9 @@ public class TraductorDR {
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
+		return "T";
 	}
-	public final void Tp() {	//////// EPSILON ////////
+	public final String Tp() {	//////// EPSILON //////// Tp −→ opmul F Tp 
 		if (_token.tipo == Token.OPMUL) {
 			addR(TP1);
 			e(Token.OPMUL);
@@ -262,8 +332,14 @@ public class TraductorDR {
 		} else {
 			es(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
 		}
+		return "Tp";
 	}
-	public final void F() {		//////// EPSILON ////////
+	public final String F() {
+		/*
+		 * F −→ numentero 
+		 * F −→ numreal 
+		 * F −→ id
+		 */
 		if (_token.tipo == Token.NUMENTERO) {
 			addR(F1);
 			e(Token.NUMENTERO);
@@ -276,6 +352,7 @@ public class TraductorDR {
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
+		return "F";
 	}
 	
 	///////////////////////////////////////////////////////////////

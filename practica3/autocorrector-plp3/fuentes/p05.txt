@@ -1,0 +1,34 @@
+program p05;
+
+begin
+  var a : real;
+      o : integer;
+      p : real;
+  endvar
+
+  o := 23 - 4 + 5 + 2;
+  p := o + 3.5 - 7;
+  
+  write(o);   
+  write(p);
+  begin 
+     var olvi : integer;
+         p : integer;
+     endvar
+  
+    olvi := 777-555
+  end;
+  begin
+    var q : real;
+    endvar
+ 
+    begin
+      var a : integer;
+      endvar
+ 
+      a := 7;
+      p := a+3;
+      q := 1 - 2 + 3 - 4.5
+    end
+  end
+end

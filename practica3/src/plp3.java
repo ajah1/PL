@@ -5,14 +5,14 @@ import java.io.IOException;
 class plp3 {
     public static void main(String[] args) {
 
-        if (args.length == 1)
+        if (args.length == 0)
         {
           try {
-            RandomAccessFile entrada = new RandomAccessFile(args[0],"r");
+            RandomAccessFile entrada = new RandomAccessFile("prueba.in","r");
             AnalizadorLexico al = new AnalizadorLexico(entrada);
             TraductorDR tdr = new TraductorDR(al);
 
-            String trad = tdr.S(); // simbolo inicial de la gramatica
+            String trad = tdr.D(); // simbolo inicial de la gramatica
             tdr.comprobarFinFichero();
             System.out.println(trad);
           }

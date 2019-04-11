@@ -1,0 +1,27 @@
+
+program p03;
+
+begin
+  var a:integer;
+      b:integer;
+  endvar
+
+  begin
+     var c:real;
+     endvar
+
+     begin 
+         var d:integer;
+         endvar
+
+         begin 
+            var c:integer; 
+            endvar
+
+            c := d+1
+         end;
+         c := d+1
+     end;
+     c := d+1   (* error semantico 'd' no ha sido declarado *)
+   end
+EnD

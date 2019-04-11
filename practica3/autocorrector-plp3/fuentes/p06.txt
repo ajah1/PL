@@ -1,0 +1,25 @@
+
+program p06;
+
+begin
+ var a:integer;
+ endvar
+
+ a := 2;
+ a := a + 2;
+ begin
+       var b:integer;
+       endvar
+
+       begin
+          var c:real; endvar
+
+          b := a+3;
+
+          a := b;
+          c := a;
+          c := a/b
+       end
+  end
+end
+
