@@ -82,10 +82,6 @@ public class TraductorDR {
 			e(Token.ID);
 			e(Token.DOSP);
 			String [] ctrad = C().split("@");
-			/*System.out.println("split de tradc size: " + ctrad.length);
-			for (String s : ctrad) {
-				System.out.print(" " + s);
-			}*/
 			e(Token.PYC);
 			if (ctrad.length == 1)
 				return ctrad[0] + " " + tlexema +  ";\n";
@@ -240,7 +236,7 @@ public class TraductorDR {
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
 			e(Token.PYC);
-			return I() + M();
+			return ";\n" + I() + M();
 		} if (_token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(M2);
@@ -268,7 +264,7 @@ public class TraductorDR {
 			e(Token.PARI);
 			String etrad = E();
 			e(Token.PARD);
-			return "printf(" + etrad;
+			return "printf(" + etrad + ")";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
 			return B();
@@ -298,7 +294,7 @@ public class TraductorDR {
 				|| _token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(EP2);
-			return ";\n";
+			return "";
 		} else {
 			es(Token.OPAS, Token.PARD, Token.PYC, Token.END);
 		}
@@ -308,13 +304,12 @@ public class TraductorDR {
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
-			
 			addR(T);
-			
 			String ftrad = F();
-			String tlexema = _token.lexema;
+			//String tlexema = _token.lexema;
 			String tptrad = Tp();
-			return ftrad+" "+ tlexema +" "+ tptrad;
+			//return ftrad+" "+ tlexema +" "+ tptrad;
+			return ftrad +" "+ tptrad;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
@@ -324,17 +319,17 @@ public class TraductorDR {
 		if (_token.tipo == Token.OPMUL) {
 			//System.out.println("Tp->" +_token.lexema);
 			String tlexema = _token.lexema;
-			//String aux = tlexema.toLowerCase();
-			//if (aux.equals("mod")) tlexema = "%";
 			addR(TP1);
 			e(Token.OPMUL);
 			String ftrad = F();
+			
 			String tptrad = Tp();
 			//System.out.println("  devuelve: " + tlexema);
-			if (tptrad.equals(""))	// ¿?¿? se hace aqui ¿?¿?
+			/*if (tptrad.equals(""))	// ¿?¿? se hace aqui ¿?¿?
 				return ftrad + tptrad;
-			else
-				return ftrad + " "+ tlexema +" "+ tptrad;
+			else*/
+				//return ftrad + " "+ tlexema +" "+ tptrad;
+			return tlexema + " " + ftrad + " " + tptrad;
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
