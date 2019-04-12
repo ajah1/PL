@@ -12,7 +12,7 @@ class plp3 {
             AnalizadorLexico al = new AnalizadorLexico(entrada);
             TraductorDR tdr = new TraductorDR(al);
 
-            String trad = tdr.D(); // simbolo inicial de la gramatica
+            String trad = tdr.S(); // simbolo inicial de la gramatica
             tdr.comprobarFinFichero();
             System.out.println(trad);
           }

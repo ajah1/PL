@@ -33,7 +33,7 @@ public class TraductorDR {
 			e(Token.PROGRAM);
 			e(Token.ID);
 			e(Token.PYC);
-			return "int main()\n{\n" + B();
+			return "int main()\n" + B();
 		} else {
 			es(Token.PROGRAM);
 		}
@@ -77,8 +77,8 @@ public class TraductorDR {
 	public final String V() { // V −→ id dosp C pyc 
 		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
-			addR(V);
 			String tlexema = _token.lexema;
+			addR(V);
 			e(Token.ID);
 			e(Token.DOSP);
 			String [] ctrad = C().split("@");
@@ -218,7 +218,7 @@ public class TraductorDR {
 			String dtrad = D();
 			String sitrad = SI();
 			e(Token.END);
-			return dtrad + sitrad;
+			return "{\n" + dtrad + sitrad + "\n}\n";
 		} else {
 			es(Token.BEGIN);
 		}
@@ -229,8 +229,7 @@ public class TraductorDR {
 				|| _token.tipo == Token.WRITE 
 				|| _token.tipo == Token.BEGIN) {
 			addR(SI);
-			I();
-			M();
+			return I() + M();
 		} else {
 			es(Token.ID, Token.WRITE, Token.BEGIN);
 		}
@@ -241,11 +240,11 @@ public class TraductorDR {
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
 			e(Token.PYC);
-			I();
-			M();
+			return I() + M();
 		} if (_token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(M2);
+			return ";\n";
 		}else {
 			es(Token.PYC, Token.END);
 		}
@@ -258,19 +257,21 @@ public class TraductorDR {
 		 * I −→ B 
 		*/ 
 		if (_token.tipo == Token.ID) {
+			String tid = _token.lexema;
 			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
-			E();
+			return tid + " = " + E();
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
-			E();
+			String etrad = E();
 			e(Token.PARD);
+			return "printf(" + etrad;
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
-			B();
+			return B();
 		} else {
 			es(Token.ID,Token.BEGIN, Token.WRITE);
 		}
@@ -281,8 +282,7 @@ public class TraductorDR {
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(E);
-			T();
-			Ep();
+			return T() + Ep();
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
@@ -292,13 +292,13 @@ public class TraductorDR {
 		if (_token.tipo == Token.OPAS) {
 			addR(EP1);
 			e(Token.OPAS);
-			T();
-			Ep();
+			return T() + " " + Ep();
 		} else if (_token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
 				|| _token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(EP2);
+			return ";\n";
 		} else {
 			es(Token.OPAS, Token.PARD, Token.PYC, Token.END);
 		}
@@ -308,10 +308,13 @@ public class TraductorDR {
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
+			
 			addR(T);
-			//e(Token.OPMUL);
-			F();
-			Tp();
+			
+			String ftrad = F();
+			String tlexema = _token.lexema;
+			String tptrad = Tp();
+			return ftrad+" "+ tlexema +" "+ tptrad;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
@@ -319,16 +322,26 @@ public class TraductorDR {
 	}
 	public final String Tp() {	//////// EPSILON //////// Tp −→ opmul F Tp 
 		if (_token.tipo == Token.OPMUL) {
+			//System.out.println("Tp->" +_token.lexema);
+			String tlexema = _token.lexema;
+			//String aux = tlexema.toLowerCase();
+			//if (aux.equals("mod")) tlexema = "%";
 			addR(TP1);
 			e(Token.OPMUL);
-			F();
-			Tp();
+			String ftrad = F();
+			String tptrad = Tp();
+			//System.out.println("  devuelve: " + tlexema);
+			if (tptrad.equals(""))	// ¿?¿? se hace aqui ¿?¿?
+				return ftrad + tptrad;
+			else
+				return ftrad + " "+ tlexema +" "+ tptrad;
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
 				|| _token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(TP2);
+			return "";
 		} else {
 			es(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
 		}
@@ -341,14 +354,20 @@ public class TraductorDR {
 		 * F −→ id
 		 */
 		if (_token.tipo == Token.NUMENTERO) {
+			String trad = _token.lexema;
 			addR(F1);
 			e(Token.NUMENTERO);
+			return trad;
 		} else if (_token.tipo == Token.NUMREAL) {
+			String trad = _token.lexema;
 			addR(F2);
 			e(Token.NUMREAL);
+			return trad;
 		} else if (_token.tipo == Token.ID) {
+			String trad = _token.lexema;
 			addR(F3);
 			e(Token.ID);
+			return trad;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}

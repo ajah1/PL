@@ -1,7 +1,24 @@
+
+program prueba;
+
+begin
  var a : integer;
- 	 b : array [ 1..7, 0..2 ] of real;
-	 c : pointer of pointer of integer;
-	 d : real;
-     e : array [ 1..5 ] of array [ 3..4 ] of pointer of integer;
  endvar
 
+   d := 7 mOD a / 2 * 2.3;
+   write ( d + 2 Div 3 - 4.5 );
+   begin
+     var c:real; endvar
+     c := 256 mod 2
+   end;
+   begin
+     var cc:integer; endvar
+     begin
+       var d:integer;
+           b:real;
+       endvar
+       B := cc;
+       write(6)
+    end
+  end
+end
