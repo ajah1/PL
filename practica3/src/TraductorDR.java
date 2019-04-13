@@ -1,4 +1,5 @@
 
+
 public class TraductorDR {
 
 	public class Pair<Ti, Td> {
@@ -385,7 +386,7 @@ public class TraductorDR {
 	//
 	///////////////////////////////////////////////////////////////
 	private final int ERRYADECL=1,ERRNOSIMPLE=2,ERRNODECL=3,ERRTIPOS=4,ERRNOENTEROIZQ=5,ERRNOENTERODER=6,ERRRANGO=7;
-	private void errorSemantico(int nerror,Token tok)
+	private void errorS(int nerror,Token tok)
 	{
 		System.err.print("Error semantico ("+tok.fila+","+tok.columna+"): en '"+tok.lexema+"', ");
 		
