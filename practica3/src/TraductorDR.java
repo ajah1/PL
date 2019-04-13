@@ -45,7 +45,7 @@ public class TraductorDR {
 			e(Token.VAR);
 			String ltrad = L();
 			e(Token.ENDVAR);
-			return ltrad;
+			return ltrad + "\n";
 		} else {
 			es(Token.VAR);
 		}
@@ -261,14 +261,14 @@ public class TraductorDR {
 			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
-			return tid + " = " + E() + ";";
+			return "  " + tid + " = " + E() + ";";
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
 			String etrad = E();
 			e(Token.PARD);
-			return "printf(" + etrad + ");";
+			return "  printf(" + etrad + ");";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
 			return B();
