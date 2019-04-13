@@ -214,7 +214,7 @@ public class TraductorDR {
 			String dtrad = D();
 			String sitrad = SI();
 			e(Token.END);
-			return "{\n" + dtrad + sitrad + "\n}\n";
+			return "{\n" + dtrad + sitrad + "\n}";
 		} else {
 			es(Token.BEGIN);
 		}
@@ -236,12 +236,16 @@ public class TraductorDR {
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
 			e(Token.PYC);
-			return ";\n" + I() + M();
+			String itrad = I();
+			String mtrad = M();
+			String out = "\n" + itrad;
+				out += mtrad;
+			return out;
 		} if (_token.tipo == Token.END) {
 			// REGLA VACIO
 			addR(M2);
-			return ";\n";
-		}else {
+			return "";
+		} else {
 			es(Token.PYC, Token.END);
 		}
 		return "M";
@@ -257,14 +261,14 @@ public class TraductorDR {
 			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
-			return tid + " = " + E();
+			return tid + " = " + E() + ";";
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
 			String etrad = E();
 			e(Token.PARD);
-			return "printf(" + etrad + ")";
+			return "printf(" + etrad + ");";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
 			return B();
@@ -278,7 +282,10 @@ public class TraductorDR {
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(E);
-			return T() + Ep();
+			String ttrad = T();
+			String eptrad = Ep();
+			//System.out.println("@@@" + ttrad + eptrad + "@@@");
+			return ttrad + eptrad;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
@@ -286,9 +293,16 @@ public class TraductorDR {
 	}
 	public final String Ep() {	//////// EPSILON //////// Ep −→ opas T Ep 
 		if (_token.tipo == Token.OPAS) {
+			String tlexema = _token.lexema;
 			addR(EP1);
 			e(Token.OPAS);
-			return T() + " " + Ep();
+			String ttrad = T();
+			String eptrad = Ep();
+			//System.out.println("|||"+eptrad+"|||");
+			String out = tlexema + " " + ttrad; //+ " " + eptrad;
+			if (eptrad != "" && eptrad != " ") 
+				out += " " + eptrad;
+			return out;
 		} else if (_token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
 				|| _token.tipo == Token.END) {
@@ -306,10 +320,11 @@ public class TraductorDR {
 				|| _token.tipo == Token.ID) {
 			addR(T);
 			String ftrad = F();
-			//String tlexema = _token.lexema;
 			String tptrad = Tp();
-			//return ftrad+" "+ tlexema +" "+ tptrad;
-			return ftrad +" "+ tptrad;
+			String out = ftrad; //+" "+ tptrad;
+			if (tptrad != "" && tptrad != " ")
+				out += " "+ tptrad;
+			return out;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
@@ -322,14 +337,11 @@ public class TraductorDR {
 			addR(TP1);
 			e(Token.OPMUL);
 			String ftrad = F();
-			
 			String tptrad = Tp();
-			//System.out.println("  devuelve: " + tlexema);
-			/*if (tptrad.equals(""))	// ¿?¿? se hace aqui ¿?¿?
-				return ftrad + tptrad;
-			else*/
-				//return ftrad + " "+ tlexema +" "+ tptrad;
-			return tlexema + " " + ftrad + " " + tptrad;
+			String out = tlexema + " " + ftrad; //+ " " + tptrad;
+			if (tptrad != "")
+				out += " " + tptrad;
+			return  out;
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
