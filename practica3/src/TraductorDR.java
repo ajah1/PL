@@ -1,16 +1,6 @@
 
 
 public class TraductorDR {
-
-	public class Pair<Ti, Td> {
-		public  Ti _ti;
-		public  Td _td;
-		
-		public Pair (Ti ti, Td td) {
-			_ti = ti;
-			_td = td;
-		}
-	}
 	
 	boolean _flag = false;
 	AnalizadorLexico _lexico = null;
@@ -34,55 +24,76 @@ public class TraductorDR {
 			e(Token.PROGRAM);
 			e(Token.ID);
 			e(Token.PYC);
-			return "int main()\n" + B();
+			return "int main()\n" + B(null);
 		} else {
-			es(Token.PROGRAM);
+			errorSint(Token.PROGRAM);
 		}
 		return "S";
 	}
-	public final String D() { // D −→ var L endvar
+	public final String D(TablaSimbolos p_tabla) { // D −→ var L endvar
 		if (_token.tipo == Token.VAR) {
 			addR(D);
 			e(Token.VAR);
-			String ltrad = L();
+			String ltrad = L(p_tabla);
 			e(Token.ENDVAR);
 			return ltrad + "\n";
 		} else {
-			es(Token.VAR);
+			errorSint(Token.VAR);
 		}
 		return "D";
 	}
-	public final String L() { // L −→ V Lp 
+	
+	public int obtenerTipo (String token_tipo) {
+		switch(token_tipo) {
+		case "int": return Simbolo.ENTERO;
+		case "float": 	return Simbolo.REAL;
+		case "array": 	return Simbolo.ARRAY;
+		case "pointer": return Simbolo.PUNTERO;
+		default: return -1000;
+		}
+	}
+	
+	public final String L(TablaSimbolos p_tabla) { // L −→ V Lp 
 		//System.out.println("ENTRA EN L");
 		if (_token.tipo == Token.ID) {
 			addR(L);
-			return V() + Lp();
+			return V(p_tabla) + Lp(p_tabla);
 		} else {
-			es(Token.ID);
+			errorSint(Token.ID);
 		}
 		return "L";
 	}
-	public final String Lp() {	//////// EPSILON //////// Lp −→ V Lp¡
+	public final String Lp(TablaSimbolos p_tabla) {	//////// EPSILON //////// Lp −→ V Lp¡
 		if (_token.tipo == Token.ID) {
 			addR(LP1);
-			return V() + Lp();
+			return V(p_tabla) + Lp(p_tabla);
 		} else if (_token.tipo == Token.ENDVAR) {
 			// REGLA PARA VACIO
 			addR(LP2);
 			return "";
 		} else {
-			es(Token.ID, Token.ENDVAR);
+			errorSint(Token.ID, Token.ENDVAR);
 		}
 		return "Lp";
 	}
-	public final String V() { // V −→ id dosp C pyc 
+	public final String V(TablaSimbolos p_tabla) { // V −→ id dosp C pyc 
 		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
+			Token taux = new Token(_token);
 			String tlexema = _token.lexema;
 			addR(V);
 			e(Token.ID);
 			e(Token.DOSP);
 			String [] ctrad = C().split("@");
+			
+			//if (p_tabla.buscar(tlexema)==null) {
+			Simbolo s = new Simbolo(taux.lexema, -1000, "tradvacia");
+			if (!p_tabla.buscarAmbito(s)) {
+				p_tabla.anyadir(new Simbolo(tlexema, -1000,"tradvacia"));
+			} else {
+				errorSema(ERRYADECL, taux);
+			}
+			
 			e(Token.PYC);
 			if (ctrad.length == 1)
 				return ctrad[0] + " " + tlexema +  ";\n";
@@ -93,7 +104,7 @@ public class TraductorDR {
 			}
 				
 		} else {
-			es(Token.ID);
+			errorSint(Token.ID);
 		}
 		return "V";
 	}
@@ -113,7 +124,7 @@ public class TraductorDR {
 			addR(C2);
 			return P();
 		} else {
-			es(Token.ARRAY, Token.POINTER, Token.INTEGER, Token.REAL );
+			errorSint(Token.ARRAY, Token.POINTER, Token.INTEGER, Token.REAL );
 		}
 		return "C";
 	}
@@ -127,7 +138,7 @@ public class TraductorDR {
 			e(Token.OF);
 			return rtrad;
 		} else {
-			es(Token.ARRAY);
+			errorSint(Token.ARRAY);
 		}
 		return "A";
 	}
@@ -139,7 +150,7 @@ public class TraductorDR {
 			//System.out.println("R -> G: " + gtrad + " " + rptrad);
 			return gtrad +rptrad;
 		} else {
-			es(Token.NUMENTERO);
+			errorSint(Token.NUMENTERO);
 		}
 		return "R";
 	}
@@ -156,7 +167,7 @@ public class TraductorDR {
 			addR(RP2);
 			return "";
 		} else {
-			es(Token.CORD, Token.COMA);
+			errorSint(Token.CORD, Token.COMA);
 		}
 		return "Rp";
 	}
@@ -174,7 +185,7 @@ public class TraductorDR {
 			//System.out.println(izq + " " + der);
 			return "["+String.valueOf(res)+"]";
 		} else {
-			es(Token.NUMENTERO);
+			errorSint(Token.NUMENTERO);
 		}
 		return "G";
 	}
@@ -190,7 +201,7 @@ public class TraductorDR {
 			addR(P2);
 			return Tipo();
 		} else {
-			es(Token.POINTER, Token.INTEGER, Token.REAL);
+			errorSint(Token.POINTER, Token.INTEGER, Token.REAL);
 		}
 		return "P";
 	}
@@ -204,41 +215,44 @@ public class TraductorDR {
 			e(Token.REAL);
 			return "float";
 		} else {
-			es(Token.INTEGER, Token.REAL);
+			errorSint(Token.INTEGER, Token.REAL);
 		}
 		return "Tipo";
 	}
-	public final String B() { // B −→ begin D SI end 
+	public final String B(TablaSimbolos p_tabla) { // B −→ begin D SI end
+		TablaSimbolos tabla = new TablaSimbolos(p_tabla); 
+		//if (p_tabla != null)
+			//tabla = new TablaSimbolos(null);
 		if (_token.tipo == Token.BEGIN ) {
 			addR(B);
 			e(Token.BEGIN);
-			String dtrad = D();
-			String sitrad = SI();
+			String dtrad = D(tabla);
+			String sitrad = SI(tabla);
 			e(Token.END);
 			return "{\n" + dtrad + sitrad + "\n}";
 		} else {
-			es(Token.BEGIN);
+			errorSint(Token.BEGIN);
 		}
 		return "B";
 	}
-	public final String SI() { // SI −→ I M 
+	public final String SI(TablaSimbolos p_tabla) { // SI −→ I M 
 		if (_token.tipo == Token.ID 
 				|| _token.tipo == Token.WRITE 
 				|| _token.tipo == Token.BEGIN) {
 			addR(SI);
-			return I() + M();
+			return I(p_tabla) + M(p_tabla);
 		} else {
-			es(Token.ID, Token.WRITE, Token.BEGIN);
+			errorSint(Token.ID, Token.WRITE, Token.BEGIN);
 		}
 		return "SI";
 	}
-	public final String M() {		//////// EPSILON //////// M −→ pyc I M 
+	public final String M(TablaSimbolos p_tabla) {		//////// EPSILON //////// M −→ pyc I M 
 		//System.out.println("M");
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
 			e(Token.PYC);
-			String itrad = I();
-			String mtrad = M();
+			String itrad = I(p_tabla);
+			String mtrad = M(p_tabla);
 			String out = "\n" + itrad;
 				out += mtrad;
 			return out;
@@ -247,11 +261,11 @@ public class TraductorDR {
 			addR(M2);
 			return "";
 		} else {
-			es(Token.PYC, Token.END);
+			errorSint(Token.PYC, Token.END);
 		}
 		return "M";
 	}
-	public final String I() {
+	public final String I(TablaSimbolos p_tabla) {
 		/*
 		 * I −→ id asig E 
 		 * I −→ write pari E pard 
@@ -259,48 +273,62 @@ public class TraductorDR {
 		*/ 
 		if (_token.tipo == Token.ID) {
 			String tid = _token.lexema;
+			Token token_aux = new Token(_token);
 			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
-			return "  " + tid + " = " + E() + ";";
+			if (p_tabla.buscar(tid)==null) {
+				errorSema(this.ERRNODECL, token_aux);
+			}
+			return "  " + tid + " = " + E(p_tabla) + ";";
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
-			String etrad = E();
+			String etrad = E(p_tabla);
 			e(Token.PARD);
 			return "  printf(" + etrad + ");";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
-			return B();
+			return B(p_tabla);
 		} else {
-			es(Token.ID,Token.BEGIN, Token.WRITE);
+			errorSint(Token.ID,Token.BEGIN, Token.WRITE);
 		}
 		return "I";
 	}
-	public final String E() { // E −→ T Ep 
+	public final String E(TablaSimbolos p_tabla) { // E −→ T Ep 
 		if (_token.tipo == Token.NUMENTERO 
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(E);
-			String ttrad = T();
-			String eptrad = Ep();
+			String ttrad = T(p_tabla);
+			String eptrad = Ep(p_tabla);
 			//System.out.println("@@@" + ttrad + eptrad + "@@@");
 			return ttrad + eptrad;
 		} else {
-			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
+			errorSint(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 		return "E";
 	}
-	public final String Ep() {	//////// EPSILON //////// Ep −→ opas T Ep 
+	public final String Ep(TablaSimbolos p_tabla) {	//////// EPSILON //////// Ep −→ opas T Ep 
 		if (_token.tipo == Token.OPAS) {
 			String tlexema = _token.lexema;
+			//Token token_aux = new Token (_token);
+			
 			addR(EP1);
 			e(Token.OPAS);
-			String ttrad = T();
-			String eptrad = Ep();
-			//System.out.println("|||"+eptrad+"|||");
-			String out = tlexema + " " + ttrad; //+ " " + eptrad;
+			
+			String ttrad = T(p_tabla);
+			String eptrad = Ep(p_tabla);
+			String out = tlexema + " " + ttrad;
+			
+			/*Character c = tlexema.charAt(0);
+			boolean is = Character.isLetter(c);
+			System.out.println("wwwwwwwwwwwwwww: " + c);
+			if (is || p_tabla.buscar(tlexema)==null) {
+				errorSema(ERRNODECL, token_aux);
+			}*/
+			
 			if (eptrad != "" && eptrad != " ") 
 				out += " " + eptrad;
 			return out;
@@ -311,34 +339,41 @@ public class TraductorDR {
 			addR(EP2);
 			return "";
 		} else {
-			es(Token.OPAS, Token.PARD, Token.PYC, Token.END);
+			errorSint(Token.OPAS, Token.PARD, Token.PYC, Token.END);
 		}
 		return "Ep";
 	}
-	public final String T() {	// T −→ F Tp 
+	public final String T(TablaSimbolos p_tabla) {	// T −→ F Tp 
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
+			Token token_aux = new Token(_token);
 			addR(T);
 			String ftrad = F();
-			String tptrad = Tp();
+			String tptrad = Tp(p_tabla);
 			String out = ftrad; //+" "+ tptrad;
+			
+			Character c = ftrad.charAt(0);
+			if (Character.isLetter(c) && p_tabla.buscar(token_aux.lexema)==null) {
+				errorSema(ERRNODECL, token_aux);
+			}
+			
 			if (tptrad != "" && tptrad != " ")
 				out += " "+ tptrad;
 			return out;
 		} else {
-			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
+			errorSint(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
 		return "T";
 	}
-	public final String Tp() {	//////// EPSILON //////// Tp −→ opmul F Tp 
+	public final String Tp(TablaSimbolos p_tabla) {	//////// EPSILON //////// Tp −→ opmul F Tp 
 		if (_token.tipo == Token.OPMUL) {
 			//System.out.println("Tp->" +_token.lexema);
 			String tlexema = _token.lexema;
 			addR(TP1);
 			e(Token.OPMUL);
 			String ftrad = F();
-			String tptrad = Tp();
+			String tptrad = Tp(p_tabla);
 			String out = tlexema + " " + ftrad; //+ " " + tptrad;
 			if (tptrad != "")
 				out += " " + tptrad;
@@ -351,7 +386,7 @@ public class TraductorDR {
 			addR(TP2);
 			return "";
 		} else {
-			es(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
+			errorSint(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
 		}
 		return "Tp";
 	}
@@ -377,7 +412,7 @@ public class TraductorDR {
 			e(Token.ID);
 			return trad;
 		} else {
-			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
+			errorSint(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 		return "F";
 	}
@@ -386,7 +421,7 @@ public class TraductorDR {
 	//
 	///////////////////////////////////////////////////////////////
 	private final int ERRYADECL=1,ERRNOSIMPLE=2,ERRNODECL=3,ERRTIPOS=4,ERRNOENTEROIZQ=5,ERRNOENTERODER=6,ERRRANGO=7;
-	private void errorS(int nerror,Token tok)
+	private void errorSema(int nerror,Token tok)
 	{
 		System.err.print("Error semantico ("+tok.fila+","+tok.columna+"): en '"+tok.lexema+"', ");
 		
@@ -411,11 +446,11 @@ public class TraductorDR {
 			//System.out.println("--->" +_token.lexema+ "<---");	
 		}
 		else {
-			es(tokEsperado);
+			errorSint(tokEsperado);
 		}
 	}
 
-	public void es(int ... args) {
+	public void errorSint(int ... args) {
 		//System.out.println("ERROR SINTACTICO");
         if (_token.tipo == Token.EOF) {
             System.err.print(
@@ -437,7 +472,7 @@ public class TraductorDR {
 
 	public void comprobarFinFichero() {
         if (_token.tipo != Token.EOF)
-        	es(Token.EOF);
+        	errorSint(Token.EOF);
         if(_flag)
             System.out.println(_reglas);
 	}

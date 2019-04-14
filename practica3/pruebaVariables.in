@@ -1,7 +1,0 @@
- var a : integer;
- 	 b : array [ 1..7, 0..2 ] of real;
-	 c : pointer of pointer of integer;
-	 d : real;
-     e : array [ 1..5 ] of array [ 3..4 ] of pointer of integer;
- endvar
-

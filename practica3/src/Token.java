@@ -19,6 +19,14 @@ public class Token {
 		tipo 	= p_tipo;
 	}
 	
+	public Token(Token _token) {
+		// TODO Auto-generated constructor stub
+		this.columna = _token.columna;
+		this.fila = _token.fila;
+		this.lexema = _token.lexema;
+		this.tipo = _token.tipo;
+	}
+
 	static{
 		nombreToken.add("(");
 		nombreToken.add(")");
