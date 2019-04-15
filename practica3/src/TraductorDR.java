@@ -95,6 +95,7 @@ public class TraductorDR {
 			}
 			
 			e(Token.PYC);
+			//System.out.println("id: " + tlexema);
 			if (ctrad.length == 1)
 				return ctrad[0] + " " + tlexema +  ";\n";
 			else {
@@ -280,7 +281,7 @@ public class TraductorDR {
 			if (p_tabla.buscar(tid)==null) {
 				errorSema(this.ERRNODECL, token_aux);
 			}
-			return "  " + tid + " = " + E(p_tabla) + ";";
+			return "  " + tid.toLowerCase() + " = " + E(p_tabla) + ";";
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
@@ -321,13 +322,6 @@ public class TraductorDR {
 			String ttrad = T(p_tabla);
 			String eptrad = Ep(p_tabla);
 			String out = tlexema + " " + ttrad;
-			
-			/*Character c = tlexema.charAt(0);
-			boolean is = Character.isLetter(c);
-			System.out.println("wwwwwwwwwwwwwww: " + c);
-			if (is || p_tabla.buscar(tlexema)==null) {
-				errorSema(ERRNODECL, token_aux);
-			}*/
 			
 			if (eptrad != "" && eptrad != " ") 
 				out += " " + eptrad;
