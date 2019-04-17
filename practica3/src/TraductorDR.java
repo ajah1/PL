@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 
 public class TraductorDR {
 	
@@ -6,6 +6,8 @@ public class TraductorDR {
 	AnalizadorLexico _lexico = null;
 	Token _token = null;
 	StringBuilder _reglas;
+	
+	ArrayList<Token> _asigI = null;
 	
 	public TraductorDR(AnalizadorLexico p_al) {
 		_lexico = p_al;
@@ -43,16 +45,6 @@ public class TraductorDR {
 		return "D";
 	}
 	
-	public int obtenerTipo (String token_tipo) {
-		switch(token_tipo) {
-		case "int": return Simbolo.ENTERO;
-		case "float": 	return Simbolo.REAL;
-		case "array": 	return Simbolo.ARRAY;
-		case "pointer": return Simbolo.PUNTERO;
-		default: return -1000;
-		}
-	}
-	
 	public final String L(TablaSimbolos p_tabla) { // L −→ V Lp 
 		//System.out.println("ENTRA EN L");
 		if (_token.tipo == Token.ID) {
@@ -76,6 +68,22 @@ public class TraductorDR {
 		}
 		return "Lp";
 	}
+	
+	public final int obtenerTipoSimbolo (String p_tipo) {
+		switch (p_tipo) {
+		case "int":
+			return Token.NUMENTERO;
+		case "float":
+			return Token.NUMREAL;
+		case "array":
+			return Token.ARRAY;
+		case "*":
+			return Token.POINTER;
+		default:
+			return -1000;
+		}
+	}
+	
 	public final String V(TablaSimbolos p_tabla) { // V −→ id dosp C pyc 
 		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
@@ -87,17 +95,18 @@ public class TraductorDR {
 			String [] ctrad = C().split("@");
 			
 			//if (p_tabla.buscar(tlexema)==null) {
-			Simbolo s = new Simbolo(taux.lexema, -1000, "tradvacia");
+			int tipoSimbolo = obtenerTipoSimbolo(ctrad[0]);
+			Simbolo s = new Simbolo(taux.lexema, tipoSimbolo, "tradvacia");
 			if (!p_tabla.buscarAmbito(s)) {
-				p_tabla.anyadir(new Simbolo(tlexema, -1000,"tradvacia"));
+				p_tabla.anyadir(s);
 			} else {
 				errorSema(ERRYADECL, taux);
 			}
 			
 			e(Token.PYC);
-			//System.out.println("id: " + tlexema);
+			
 			if (ctrad.length == 1)
-				return ctrad[0] + " " + tlexema +  ";\n";
+				return  ctrad[0] + " " +tlexema +  ";\n";
 			else {
 				String out = ctrad[0] + " "+ tlexema;// + ctrad[1] +  
 				for (int i = ctrad.length-1 ; i >= 1; --i) out += ctrad[i];
@@ -266,12 +275,122 @@ public class TraductorDR {
 		}
 		return "M";
 	}
+	
+	// anyadir si es necesario los itor()
+	// devuelve el tipo de la asignacion
+	// true => integer 
+	/*
+	 * 1. Asignacion de un solo token (otra variable)
+	 */
+	public final void procesarAux(Token p_token, 
+			TablaSimbolos p_tabla,
+			StringBuilder p_s) {
+		
+		// añadir el ;
+		if (!_asigI.get(_asigI.size()-1).lexema.contentEquals(";")) {
+			Token taux = new Token();
+			taux.lexema = ";";
+			taux.tipo =  Token.PYC;
+			_asigI.add(taux);
+		}
+		
+		int tipoVariable = p_tabla.buscar(p_token.lexema).tipo;
+		
+		boolean parar = false;
+		int i = 0;
+		
+		// Casos para cuando la asginacion se iguala a una variable
+		if (_asigI.size() <= 2) {
+			int ttoken = p_tabla.buscar(p_token.lexema).tipo;
+			
+			int tasig;
+			if (_asigI.get(0).tipo == Token.ID) {
+				tasig = p_tabla.buscar(_asigI.get(0).lexema).tipo;
+			} else {
+				tasig = _asigI.get(0).tipo;
+			}
+			
+			
+			if (ttoken == Token.NUMREAL && tasig == Token.NUMENTERO) {
+				p_s.append("itor("+_asigI.get(0).lexema+");");
+			} else if (ttoken == Token.NUMENTERO && tasig == Token.NUMREAL) {
+				errorSema(ERRTIPOS, p_token);
+			}
+			return;
+		}
+		
+		// Tremenda basura :D que estoy haciendo
+		Token tizq 			= _asigI.get(i);
+		Token toperando 	= _asigI.get(i+1);
+		Token tder 			= _asigI.get(i+2);
+		int opizq = _asigI.get(i).tipo;
+		int opder = _asigI.get(i+2).tipo;
+		
+		int tipo_exp = -200;
+		
+		// Si son un variable (ID) obtener el tipo de la tabla de simbolos
+		if (opizq == Token.ID) opizq = p_tabla.buscar(tizq.lexema).tipo;
+		if (opder == Token.ID) opder = p_tabla.buscar(tder.lexema).tipo;
+		// Procesar la expresion "izq operando der"
+		if (opizq == opder) {	// 7 mod 2
+			tipo_exp = Token.NUMENTERO;
+			if (opizq != tipoVariable) {
+				tipo_exp = Token.NUMREAL;
+				p_s.append("itor(" + tizq.lexema 
+						+ " " +toperando.lexema
+						+ " " +tder.lexema + ")");
+			}
+		}
+		// Caso en que solo tiene una expresion
+		if (i+3 == _asigI.size()-1) {
+			p_s.append(";");
+			return;
+		}
+		i+=4;
+		
+		while (!parar) {
+			
+			toperando = _asigI.get(i-1);
+			tder = _asigI.get(i);
+			opder = _asigI.get(i).tipo;
+			if (tipo_exp == Token.NUMREAL) {
+				tipo_exp = Token.NUMREAL;
+				if (opder == Token.NUMENTERO) {
+					p_s.append(" " +toperando.lexema+"r "+"itor("+tder.lexema+")");
+				} else { // es Real opera Real
+					p_s.append(" " +toperando.lexema+"r "+tder.lexema);
+				}
+
+			}
+			
+			// llegamos al final??
+			if (i+1 == _asigI.size()-1) break;
+			
+			i+=2;
+		}
+		p_s.append(";");
+	}
+	
+	// El toke almacena la información de la variable
+	public final String procesarAsigI(Token p_token, TablaSimbolos p_tabla) {
+		StringBuilder s = new StringBuilder();
+		procesarAux(p_token, p_tabla, s);
+		
+		_asigI.clear();
+		_asigI = null;
+		
+		return s.toString();
+	}
+	
 	public final String I(TablaSimbolos p_tabla) {
 		/*
 		 * I −→ id asig E 
 		 * I −→ write pari E pard 
 		 * I −→ B 
 		*/ 
+		if (_asigI == null)
+			_asigI = new ArrayList<Token>(); 
+		
 		if (_token.tipo == Token.ID) {
 			String tid = _token.lexema;
 			Token token_aux = new Token(_token);
@@ -281,13 +400,19 @@ public class TraductorDR {
 			if (p_tabla.buscar(tid)==null) {
 				errorSema(this.ERRNODECL, token_aux);
 			}
-			return "  " + tid.toLowerCase() + " = " + E(p_tabla) + ";";
+			E(p_tabla);
+			String procesado = procesarAsigI(token_aux, p_tabla);
+			String g = "";//p_tabla.mutar(tid);
+			return "  "+ g+tid.toLowerCase() + " = " + procesado;
+			
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
 			String etrad = E(p_tabla);
 			e(Token.PARD);
+			_asigI.clear();
+			_asigI = null;
 			return "  printf(" + etrad + ");";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
@@ -297,6 +422,9 @@ public class TraductorDR {
 		}
 		return "I";
 	}
+	
+
+	
 	public final String E(TablaSimbolos p_tabla) { // E −→ T Ep 
 		if (_token.tipo == Token.NUMENTERO 
 				|| _token.tipo == Token.NUMREAL
@@ -304,7 +432,7 @@ public class TraductorDR {
 			addR(E);
 			String ttrad = T(p_tabla);
 			String eptrad = Ep(p_tabla);
-			//System.out.println("@@@" + ttrad + eptrad + "@@@");
+	
 			return ttrad + eptrad;
 		} else {
 			errorSint(Token.NUMENTERO, Token.NUMREAL, Token.ID);
@@ -343,7 +471,21 @@ public class TraductorDR {
 				|| _token.tipo == Token.ID) {
 			Token token_aux = new Token(_token);
 			addR(T);
+			if (!_token.lexema.contains("end")) {
+				if (_token.lexema.toLowerCase().contains("mod"))
+					_token.lexema = "%";
+				else if (_token.lexema.toLowerCase().contains("div"))
+					_token.lexema = "/";
+				_asigI.add(_token);
+			}
 			String ftrad = F();
+			if (!_token.lexema.contains("end")) {
+				if (_token.lexema.toLowerCase().contains("mod"))
+					_token.lexema = "%";
+				else if (_token.lexema.toLowerCase().contains("div"))
+					_token.lexema = "/";
+				_asigI.add(_token);
+			}
 			String tptrad = Tp(p_tabla);
 			String out = ftrad; //+" "+ tptrad;
 			
@@ -366,7 +508,21 @@ public class TraductorDR {
 			String tlexema = _token.lexema;
 			addR(TP1);
 			e(Token.OPMUL);
+			if (!_token.lexema.contains("end")) {
+				if (_token.lexema.toLowerCase().contains("mod"))
+					_token.lexema = "%";
+				else if (_token.lexema.toLowerCase().contains("div"))
+					_token.lexema = "/";
+				_asigI.add(_token);
+			}
 			String ftrad = F();
+			if (!_token.lexema.contains("end")) {
+				if (_token.lexema.toLowerCase().contains("mod"))
+					_token.lexema = "%";
+				else if (_token.lexema.toLowerCase().contains("div"))
+					_token.lexema = "/";
+				_asigI.add(_token);
+			}
 			String tptrad = Tp(p_tabla);
 			String out = tlexema + " " + ftrad; //+ " " + tptrad;
 			if (tptrad != "")
@@ -417,7 +573,9 @@ public class TraductorDR {
 	private final int ERRYADECL=1,ERRNOSIMPLE=2,ERRNODECL=3,ERRTIPOS=4,ERRNOENTEROIZQ=5,ERRNOENTERODER=6,ERRRANGO=7;
 	private void errorSema(int nerror,Token tok)
 	{
-		System.err.print("Error semantico ("+tok.fila+","+tok.columna+"): en '"+tok.lexema+"', ");
+		int columna = tok.columna;
+		if (nerror == ERRTIPOS) columna+=2;
+		System.err.print("Error semantico ("+tok.fila+","+columna+"): en '"+tok.lexema+"', ");
 		
 		switch (nerror) {
 		  case ERRYADECL: System.err.println("ya existe en este ambito"); break;
