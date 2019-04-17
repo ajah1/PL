@@ -5,10 +5,10 @@ import java.io.IOException;
 class plp3 {
     public static void main(String[] args) {
 
-        if (args.length == 0)
+        if (args.length == 1)
         {
           try {
-            RandomAccessFile entrada = new RandomAccessFile("prueba.in","r");
+            RandomAccessFile entrada = new RandomAccessFile(args[0],"r");
             AnalizadorLexico al = new AnalizadorLexico(entrada);
             TraductorDR tdr = new TraductorDR(al);
 

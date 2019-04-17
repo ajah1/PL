@@ -11,11 +11,10 @@ public class TraductorDR {
 	
 	public TraductorDR(AnalizadorLexico p_al) {
 		_lexico = p_al;
-		_flag = true;
+		//_flag = true;
 		_token = _lexico.siguienteToken();
 		_reglas = new StringBuilder();
 	}
-	
 	
 	///////////////////////////////////////////////////////////////
 	//
@@ -32,6 +31,7 @@ public class TraductorDR {
 		}
 		return "S";
 	}
+	
 	public final String D(TablaSimbolos p_tabla) { // D −→ var L endvar
 		if (_token.tipo == Token.VAR) {
 			addR(D);
@@ -55,6 +55,7 @@ public class TraductorDR {
 		}
 		return "L";
 	}
+	
 	public final String Lp(TablaSimbolos p_tabla) {	//////// EPSILON //////// Lp −→ V Lp¡
 		if (_token.tipo == Token.ID) {
 			addR(LP1);
@@ -67,21 +68,6 @@ public class TraductorDR {
 			errorSint(Token.ID, Token.ENDVAR);
 		}
 		return "Lp";
-	}
-	
-	public final int obtenerTipoSimbolo (String p_tipo) {
-		switch (p_tipo) {
-		case "int":
-			return Token.NUMENTERO;
-		case "float":
-			return Token.NUMREAL;
-		case "array":
-			return Token.ARRAY;
-		case "*":
-			return Token.POINTER;
-		default:
-			return -1000;
-		}
 	}
 	
 	public final String V(TablaSimbolos p_tabla) { // V −→ id dosp C pyc 
@@ -104,13 +90,13 @@ public class TraductorDR {
 			}
 			
 			e(Token.PYC);
-			
+			String ss = p_tabla.mutar(tlexema);
 			if (ctrad.length == 1)
-				return  ctrad[0] + " " +tlexema +  ";\n";
+				return  ctrad[0] + " " +ss +tlexema +  ";\n";
 			else {
 				String out = ctrad[0] + " "+ tlexema;// + ctrad[1] +  
 				for (int i = ctrad.length-1 ; i >= 1; --i) out += ctrad[i];
-				return out + ";\n";
+				return ss +out + ";\n";
 			}
 				
 		} else {
@@ -118,6 +104,7 @@ public class TraductorDR {
 		}
 		return "V";
 	}
+	
 	public final String C() {
 		// C −→ A C 
 		// C −→ P
@@ -138,6 +125,7 @@ public class TraductorDR {
 		}
 		return "C";
 	}
+	
 	public final String A() { // A −→ array cori R cord of 
 		if (_token.tipo == Token.ARRAY) {
 			addR(A);
@@ -152,6 +140,7 @@ public class TraductorDR {
 		}
 		return "A";
 	}
+	
 	public final String R() { // R −→ G Rp 
 		if (_token.tipo == Token.NUMENTERO) {
 			addR(R);
@@ -164,6 +153,7 @@ public class TraductorDR {
 		}
 		return "R";
 	}
+	
 	public final String Rp() {	//////// EPSILON //////// Rp −→ coma G Rp 
 		if (_token.tipo == Token.COMA) {
 			addR(RP1);
@@ -181,6 +171,7 @@ public class TraductorDR {
 		}
 		return "Rp";
 	}
+	
 	public final String G() { // G −→ numentero ptopto numentero
 		if (_token.tipo == Token.NUMENTERO) {
 			String nizq = _token.lexema;
@@ -199,6 +190,7 @@ public class TraductorDR {
 		}
 		return "G";
 	}
+	
 	public final String P() {
 		// P −→ pointer of P 
 		// P −→ Tipo 
@@ -215,6 +207,7 @@ public class TraductorDR {
 		}
 		return "P";
 	}
+	
 	public final String Tipo() {
 		if (_token.tipo == Token.INTEGER ) {
 			addR(TIPO1);
@@ -229,6 +222,7 @@ public class TraductorDR {
 		}
 		return "Tipo";
 	}
+	
 	public final String B(TablaSimbolos p_tabla) { // B −→ begin D SI end
 		TablaSimbolos tabla = new TablaSimbolos(p_tabla); 
 		//if (p_tabla != null)
@@ -245,6 +239,7 @@ public class TraductorDR {
 		}
 		return "B";
 	}
+	
 	public final String SI(TablaSimbolos p_tabla) { // SI −→ I M 
 		if (_token.tipo == Token.ID 
 				|| _token.tipo == Token.WRITE 
@@ -256,6 +251,7 @@ public class TraductorDR {
 		}
 		return "SI";
 	}
+	
 	public final String M(TablaSimbolos p_tabla) {		//////// EPSILON //////// M −→ pyc I M 
 		//System.out.println("M");
 		if (_token.tipo == Token.PYC) {
@@ -274,112 +270,6 @@ public class TraductorDR {
 			errorSint(Token.PYC, Token.END);
 		}
 		return "M";
-	}
-	
-	// anyadir si es necesario los itor()
-	// devuelve el tipo de la asignacion
-	// true => integer 
-	/*
-	 * 1. Asignacion de un solo token (otra variable)
-	 */
-	public final void procesarAux(Token p_token, 
-			TablaSimbolos p_tabla,
-			StringBuilder p_s) {
-		
-		// añadir el ;
-		if (!_asigI.get(_asigI.size()-1).lexema.contentEquals(";")) {
-			Token taux = new Token();
-			taux.lexema = ";";
-			taux.tipo =  Token.PYC;
-			_asigI.add(taux);
-		}
-		
-		int tipoVariable = p_tabla.buscar(p_token.lexema).tipo;
-		
-		boolean parar = false;
-		int i = 0;
-		
-		// Casos para cuando la asginacion se iguala a una variable
-		if (_asigI.size() <= 2) {
-			int ttoken = p_tabla.buscar(p_token.lexema).tipo;
-			
-			int tasig;
-			if (_asigI.get(0).tipo == Token.ID) {
-				tasig = p_tabla.buscar(_asigI.get(0).lexema).tipo;
-			} else {
-				tasig = _asigI.get(0).tipo;
-			}
-			
-			
-			if (ttoken == Token.NUMREAL && tasig == Token.NUMENTERO) {
-				p_s.append("itor("+_asigI.get(0).lexema+");");
-			} else if (ttoken == Token.NUMENTERO && tasig == Token.NUMREAL) {
-				errorSema(ERRTIPOS, p_token);
-			}
-			return;
-		}
-		
-		// Tremenda basura :D que estoy haciendo
-		Token tizq 			= _asigI.get(i);
-		Token toperando 	= _asigI.get(i+1);
-		Token tder 			= _asigI.get(i+2);
-		int opizq = _asigI.get(i).tipo;
-		int opder = _asigI.get(i+2).tipo;
-		
-		int tipo_exp = -200;
-		
-		// Si son un variable (ID) obtener el tipo de la tabla de simbolos
-		if (opizq == Token.ID) opizq = p_tabla.buscar(tizq.lexema).tipo;
-		if (opder == Token.ID) opder = p_tabla.buscar(tder.lexema).tipo;
-		// Procesar la expresion "izq operando der"
-		if (opizq == opder) {	// 7 mod 2
-			tipo_exp = Token.NUMENTERO;
-			if (opizq != tipoVariable) {
-				tipo_exp = Token.NUMREAL;
-				p_s.append("itor(" + tizq.lexema 
-						+ " " +toperando.lexema
-						+ " " +tder.lexema + ")");
-			}
-		}
-		// Caso en que solo tiene una expresion
-		if (i+3 == _asigI.size()-1) {
-			p_s.append(";");
-			return;
-		}
-		i+=4;
-		
-		while (!parar) {
-			
-			toperando = _asigI.get(i-1);
-			tder = _asigI.get(i);
-			opder = _asigI.get(i).tipo;
-			if (tipo_exp == Token.NUMREAL) {
-				tipo_exp = Token.NUMREAL;
-				if (opder == Token.NUMENTERO) {
-					p_s.append(" " +toperando.lexema+"r "+"itor("+tder.lexema+")");
-				} else { // es Real opera Real
-					p_s.append(" " +toperando.lexema+"r "+tder.lexema);
-				}
-
-			}
-			
-			// llegamos al final??
-			if (i+1 == _asigI.size()-1) break;
-			
-			i+=2;
-		}
-		p_s.append(";");
-	}
-	
-	// El toke almacena la información de la variable
-	public final String procesarAsigI(Token p_token, TablaSimbolos p_tabla) {
-		StringBuilder s = new StringBuilder();
-		procesarAux(p_token, p_tabla, s);
-		
-		_asigI.clear();
-		_asigI = null;
-		
-		return s.toString();
 	}
 	
 	public final String I(TablaSimbolos p_tabla) {
@@ -402,18 +292,20 @@ public class TraductorDR {
 			}
 			E(p_tabla);
 			String procesado = procesarAsigI(token_aux, p_tabla);
-			String g = "";//p_tabla.mutar(tid);
+			String g = p_tabla.mutar(tid);
 			return "  "+ g+tid.toLowerCase() + " = " + procesado;
 			
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
-			String etrad = E(p_tabla);
+			Token taux = _token;
+			E(p_tabla);
 			e(Token.PARD);
+			String s = procesarWriteI(taux, p_tabla);
 			_asigI.clear();
 			_asigI = null;
-			return "  printf(" + etrad + ");";
+			return "  printf(" + s + ");";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
 			return B(p_tabla);
@@ -422,8 +314,6 @@ public class TraductorDR {
 		}
 		return "I";
 	}
-	
-
 	
 	public final String E(TablaSimbolos p_tabla) { // E −→ T Ep 
 		if (_token.tipo == Token.NUMENTERO 
@@ -439,14 +329,12 @@ public class TraductorDR {
 		}
 		return "E";
 	}
+	
 	public final String Ep(TablaSimbolos p_tabla) {	//////// EPSILON //////// Ep −→ opas T Ep 
 		if (_token.tipo == Token.OPAS) {
 			String tlexema = _token.lexema;
-			//Token token_aux = new Token (_token);
-			
 			addR(EP1);
 			e(Token.OPAS);
-			
 			String ttrad = T(p_tabla);
 			String eptrad = Ep(p_tabla);
 			String out = tlexema + " " + ttrad;
@@ -567,6 +455,135 @@ public class TraductorDR {
 		return "F";
 	}
 	
+	
+	///////////////////////////////////////////////////////////////
+	//
+	///////////////////////////////////////////////////////////////
+	public final int obtenerTipoSimbolo (String p_tipo) {
+		switch (p_tipo) {
+		case "int":
+			return Token.NUMENTERO;
+		case "float":
+			return Token.NUMREAL;
+		case "array":
+			return Token.ARRAY;
+		case "*":
+			return Token.POINTER;
+		default:
+			return -1000;
+		}
+	}
+	public String procesarWriteI(Token p_token, TablaSimbolos p_tabla) {
+		if (_asigI.size() <= 3) {
+			String prefijo = '"'+"%f"+'"'+",";
+			if (p_token.tipo == Token.NUMENTERO)
+				prefijo = '"'+"%d"+'"'+",";
+			
+			return prefijo + _asigI.get(0).lexema;
+		} else {
+			return "\"%f\",d +r itor(2 /i 3) -r 4.5";
+		}
+	}
+	public final void procesarAux(Token p_token, 
+			TablaSimbolos p_tabla,
+			StringBuilder p_s) {
+		
+		// añadir el ;
+		if (!_asigI.get(_asigI.size()-1).lexema.contentEquals(";")) {
+			Token taux = new Token();
+			taux.lexema = ";";
+			taux.tipo =  Token.PYC;
+			_asigI.add(taux);
+		}
+		
+		int tipoVariable = p_tabla.buscar(p_token.lexema).tipo;
+		
+		boolean parar = false;
+		int i = 0;
+		
+		// Casos para cuando la asginacion se iguala a una variable
+		if (_asigI.size() <= 2) {
+			int ttoken = p_tabla.buscar(p_token.lexema).tipo;
+			
+			int tasig;
+			if (_asigI.get(0).tipo == Token.ID) {
+				tasig = p_tabla.buscar(_asigI.get(0).lexema).tipo;
+			} else {
+				tasig = _asigI.get(0).tipo;
+			}
+			
+			
+			if (ttoken == Token.NUMREAL && tasig == Token.NUMENTERO) {
+				String ss = p_tabla.mutarVar(_asigI.get(0).lexema);
+				p_s.append("itor("+ss+_asigI.get(0).lexema+");");
+			} else if (ttoken == Token.NUMENTERO && tasig == Token.NUMREAL) {
+				errorSema(ERRTIPOS, p_token);
+			}
+			return;
+		}
+		
+		// Tremenda basura :D que estoy haciendo
+		Token tizq 			= _asigI.get(i);
+		Token toperando 	= _asigI.get(i+1);
+		Token tder 			= _asigI.get(i+2);
+		int opizq = _asigI.get(i).tipo;
+		int opder = _asigI.get(i+2).tipo;
+		
+		int tipo_exp = -200;
+		
+		// Si son un variable (ID) obtener el tipo de la tabla de simbolos
+		if (opizq == Token.ID) opizq = p_tabla.buscar(tizq.lexema).tipo;
+		if (opder == Token.ID) opder = p_tabla.buscar(tder.lexema).tipo;
+		// Procesar la expresion "izq operando der"
+		if (opizq == opder) {	// 7 mod 2
+			tipo_exp = Token.NUMENTERO;
+			if (opizq != tipoVariable) {
+				tipo_exp = Token.NUMREAL;
+				p_s.append("itor(" + tizq.lexema 
+						+ " " +toperando.lexema
+						+ " " +tder.lexema + ")");
+			}
+		}
+		// Caso en que solo tiene una expresion
+		if (i+3 == _asigI.size()-1) {
+			p_s.append(";");
+			return;
+		}
+		i+=4;
+		
+		while (!parar) {
+			
+			toperando = _asigI.get(i-1);
+			tder = _asigI.get(i);
+			opder = _asigI.get(i).tipo;
+			if (tipo_exp == Token.NUMREAL) {
+				tipo_exp = Token.NUMREAL;
+				if (opder == Token.NUMENTERO) {
+					p_s.append(" " +toperando.lexema+"r "+"itor("+tder.lexema+")");
+				} else { // es Real opera Real
+					p_s.append(" " +toperando.lexema+"r "+tder.lexema);
+				}
+
+			}
+			
+			// llegamos al final??
+			if (i+1 == _asigI.size()-1) break;
+			
+			i+=2;
+		}
+		p_s.append(";");
+	}
+	// El toke almacena la información de la variable
+	public final String procesarAsigI(Token p_token, TablaSimbolos p_tabla) {
+		StringBuilder s = new StringBuilder();
+		procesarAux(p_token, p_tabla, s);
+		
+		_asigI.clear();
+		_asigI = null;
+		
+		return s.toString();
+	}
+	
 	///////////////////////////////////////////////////////////////
 	//
 	///////////////////////////////////////////////////////////////
@@ -574,8 +591,12 @@ public class TraductorDR {
 	private void errorSema(int nerror,Token tok)
 	{
 		int columna = tok.columna;
-		if (nerror == ERRTIPOS) columna+=2;
-		System.err.print("Error semantico ("+tok.fila+","+columna+"): en '"+tok.lexema+"', ");
+		String s = tok.lexema;
+		if (nerror == ERRTIPOS)  {
+			columna+=2;
+			s = ":=";
+		}
+		System.err.print("Error semantico ("+tok.fila+","+columna+"): en '"+s+"', ");
 		
 		switch (nerror) {
 		  case ERRYADECL: System.err.println("ya existe en este ambito"); break;
@@ -589,7 +610,6 @@ public class TraductorDR {
 
 		System.exit(-1);
 	}
-
 	
 	public final void e(int tokEsperado) {
 		//System.out.print("EMPAREJAR:-->" +tokEsperado);

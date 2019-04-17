@@ -15,6 +15,6 @@ program p04;
       var i:integer;
       endvar
    
-      i := a  (* (18,9): en ':=', tipos incompatibles entero/real *)
+      i := a  (* error semantico ':=' tipos incompatibles entero/real *)
   end
 end

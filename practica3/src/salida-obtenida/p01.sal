@@ -1,0 +1,27 @@
+int main()
+{
+int a;
+float b[7][3];
+int** c;
+float d;
+int* e[5][2];
+
+  d = itor(7 % a) /r itor(2) *r 2.3;
+  printf("%f",d +r itor(2 /i 3) -r 4.5);
+{
+float _c;
+
+  _c = itor(256 % 2);
+}
+{
+int _cc;
+
+{
+int __d;
+float __b;
+
+  __b = itor(_cc);
+  printf("%d",6);
+}
+}
+}
