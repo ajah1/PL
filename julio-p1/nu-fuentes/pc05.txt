@@ -1,0 +1,8 @@
+program pc05;
+
+begin
+
+  var a : real;
+
+  begin  (* error sintactico en 'begin' esperaba id o endvar *)
+  

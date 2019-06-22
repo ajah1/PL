@@ -1,0 +1,8 @@
+program pc01;
+begin
+
+  var a array[1..2] of integer;
+
+    (* error sintactico en 'array' *)
+
+end

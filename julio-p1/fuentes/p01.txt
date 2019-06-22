@@ -1,0 +1,11 @@
+program p01;
+
+begin
+  var a : integer;
+      b : array [ 1..7 ] of real;
+      c : pointer of integer;
+  endvar
+
+   a := 7 mOD b + 2.3;
+   write(c)
+end

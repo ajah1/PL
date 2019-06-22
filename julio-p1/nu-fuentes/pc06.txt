@@ -1,0 +1,9 @@
+program pc06;
+
+begin
+    var a : real;
+    EnDvAr
+
+    a := .27 ; (* Error léxico en '.' *)
+
+end

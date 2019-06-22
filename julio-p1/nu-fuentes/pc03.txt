@@ -1,0 +1,13 @@
+program pc03;
+
+begin
+
+   var i : integer;
+       m : array[1..4,1..4] of real;
+   endvar
+
+   i := 1MOD 3;
+   write(i)
+end;
+
+  (* Error sintactico (11,4): econtrado ';', esperaba fin de fichero *)
