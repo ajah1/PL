@@ -1,0 +1,11 @@
+program p02;
+
+begin
+  var a : integer ;
+      b : pointer of real;
+      c : array [200..201] of integer;
+      a : integer ;  (* error semantico 'a' ya existe en este ambito *)
+  endvar
+
+
+end

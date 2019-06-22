@@ -1,0 +1,31 @@
+int main()
+{
+int a;
+float b;
+int c;
+float d;
+int e;
+
+{
+float _a;
+
+{
+int __b;
+
+{
+float ___c;
+
+{
+int ____d;
+
+{
+float _____e;
+
+  _a = itor(__b) +r ___c +r itor(____d) +r _____e;
+}
+}
+}
+}
+}
+}
+

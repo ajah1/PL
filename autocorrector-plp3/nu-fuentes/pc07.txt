@@ -1,0 +1,20 @@
+
+program prueba;
+
+begin
+ var a : integer;
+     b : real;
+     c : integer;
+     d : real;
+     e : integer;
+     f : array [1..3,4..7] of array [8..12,13..18,19..25] of real;
+ endvar
+
+ A := 1+2;
+ B := A/3;
+ C := a * 5 MoD 3;
+ D := A DIV 2 * B;
+ E := a-c;
+ write(d);
+ write(A+C+E)
+end

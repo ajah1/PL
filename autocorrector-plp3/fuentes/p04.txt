@@ -1,0 +1,20 @@
+
+program p04;
+ begin
+  var a:real; endvar
+  begin
+   var b:real; endvar
+   begin
+     var a:integer; endvar
+     
+     a := a-a+a+a-a+a+a-a+a-a
+   end
+  END;
+
+  begin 
+      var i:integer;
+      endvar
+   
+      i := a  (* error semantico ':=' tipos incompatibles entero/real *)
+  end
+end

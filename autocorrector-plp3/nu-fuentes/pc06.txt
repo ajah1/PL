@@ -1,0 +1,28 @@
+
+program prueba;
+
+begin
+ var a : integer;
+     b : real;
+     c : integer;
+     d : real;
+     e : integer;
+ endvar
+
+   begin
+     var a:real; endvar
+     begin
+       var b:integer; endvar
+       begin
+         var c:real; endvar
+         begin
+           var d:integer; endvar
+           begin
+             var e:real; endvar
+             a := b+c+d+e
+           end
+         end
+       end
+     end
+   end
+end

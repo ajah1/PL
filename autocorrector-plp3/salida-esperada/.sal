@@ -1,0 +1,18 @@
+int main()
+{
+int a;
+float b;
+int c;
+float d;
+int e;
+float f[3][4][5][6][7];
+
+  a = 1 +i 2;
+  b = itor(a) /r itor(3);
+  c = a *i 5 % 3;
+  d = itor(a /i 2) *r b;
+  e = a -i c;
+  printf("%f",d);
+  printf("%d",a +i c +i e);
+}
+
