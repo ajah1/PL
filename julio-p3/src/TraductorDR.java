@@ -20,21 +20,22 @@ public class TraductorDR {
 	///////////////////////////////////////////////////////////////
 	public final String S() {
 		if (_token.tipo == Token.PROGRAM) {
+			TablaSimbolos tsimb = null;
 			addR(S);
 			e(Token.PROGRAM);
 			e(Token.ID);
 			e(Token.PYC);
-			return "int main()\n"+B();
+			return "int main()\n"+B(tsimb);
 		} else {
 			es(Token.PROGRAM);
 		}
 		return "S";
 	}
-	public final String D() {
+	public final String D(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.VAR) {
 			addR(D);
 			e(Token.VAR);
-			String trad_l = L();
+			String trad_l = L(tsimb);
 			e(Token.ENDVAR);
 			return trad_l + "\n";
 		} else {
@@ -42,20 +43,20 @@ public class TraductorDR {
 		}
 		return "D";
 	}
-	public final String L() {
+	public final String L(TablaSimbolos tsimb) {
 		//System.out.println("ENTRA EN L");
 		if (_token.tipo == Token.ID) {
 			addR(L);
-			return V() + Lp();
+			return V(tsimb) + Lp(tsimb);
 		} else {
 			es(Token.ID);
 		}
 		return "L";
 	}
-	public final String Lp() {	//////// EPSILON ////////
+	public final String Lp(TablaSimbolos tsimb) {	//////// EPSILON ////////
 		if (_token.tipo == Token.ID) {
 			addR(LP1);
-			return V() + Lp();
+			return V(tsimb) + Lp(tsimb);
 		} else if (_token.tipo == Token.ENDVAR) {
 			// REGLA PARA VACIO
 			addR(LP2);
@@ -65,7 +66,7 @@ public class TraductorDR {
 		}
 		return "Lp";
 	}
-	public final String V() {
+	public final String V(TablaSimbolos tsimb) {
 		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
 			Atributos at = new Atributos();
@@ -75,7 +76,10 @@ public class TraductorDR {
 			e(Token.DOSP);
 			String trad_c = C(at);
 			e(Token.PYC);
-			return at.tipo + at.punteros + " " + lexema_id + trad_c + ";\n";
+			tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "nombreTrad"));
+			return at.tipo + at.punteros + " " 
+				+ tsimb.mutar(lexema_id) + lexema_id 
+				+ trad_c + ";\n";
 		} else {
 			es(Token.ID);
 		}
@@ -186,12 +190,20 @@ public class TraductorDR {
 		}
 		return "Tipo";
 	}
-	public final String B() {
+	public final String B(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.BEGIN ) {
+			TablaSimbolos ambitoHijo = null;
+			if (tsimb == null) {
+				tsimb = new TablaSimbolos(null);
+				ambitoHijo = tsimb;
+			} else {
+				ambitoHijo = new TablaSimbolos(tsimb);
+			}
+			
 			addR(B);
 			e(Token.BEGIN);
-			String trad_d = D();
-			String trad_si = SI();
+			String trad_d = D(ambitoHijo);
+			String trad_si = SI(ambitoHijo);
 			e(Token.END);
 			return "{\n" + trad_d + trad_si+"}\n";
 		} else {
@@ -199,13 +211,13 @@ public class TraductorDR {
 		}
 		return "SI";
 	}
-	public final String SI() {
+	public final String SI(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.ID 
 				|| _token.tipo == Token.WRITE 
 				|| _token.tipo == Token.BEGIN) {
 			addR(SI);
-			String trad_i = I();
-			String trad_m = M();
+			String trad_i = I(tsimb);
+			String trad_m = M(tsimb);
 			anyadido2 = false;
 			return trad_i + trad_m;
 		} else {
@@ -213,12 +225,12 @@ public class TraductorDR {
 		}
 		return "SI";
 	}
-	public final String M() {		//////// EPSILON ////////
+	public final String M(TablaSimbolos tsimb) {		//////// EPSILON ////////
 		//System.out.println("M");
 		if (_token.tipo == Token.PYC) {
 			addR(M1);
 			e(Token.PYC);
-			return I() + M();
+			return I(tsimb) + M(tsimb);
 		} if (_token.tipo == Token.END) {
 			// REGLA VACIO
 			//addR(M2);
@@ -232,13 +244,16 @@ public class TraductorDR {
 		}
 		return "M";
 	}
-	public final String I() {
+	public final String I(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.ID) {
 			String lexema_id = _token.lexema;
 			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
-			return "  " + lexema_id + " = " + E()+";\n";
+			return "  "
+				+ tsimb.mutar(lexema_id)	// Para los _
+				+ lexema_id.toLowerCase() 
+				+ " = " + E()+";\n";
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
@@ -248,7 +263,7 @@ public class TraductorDR {
 			return "  printf("+trad_e+");\n";
 		} else if (_token.tipo == Token.BEGIN) {
 			addR(I3);
-			return B();
+			return B(tsimb);
 		} else {
 			es(Token.ID,Token.BEGIN, Token.WRITE);
 		}
@@ -337,6 +352,14 @@ public class TraductorDR {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 		return "F";
+	}
+	
+	public int ObtenerTipo(String tipo) {
+		switch (tipo) {
+		case "int": return Simbolo.ENTERO;
+		case "float": return Simbolo.REAL;
+		default: return -1;
+		}
 	}
 	
 	///////////////////////////////////////////////////////////////

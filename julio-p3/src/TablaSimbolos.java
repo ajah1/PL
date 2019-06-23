@@ -41,4 +41,12 @@ public class TablaSimbolos {
      else
        return null;
    }
+   
+   String mutar(String nombre) {
+	   if (padre != null) {
+		   return "_" + padre.mutar(nombre);
+	   } else {
+		   return "";
+	   }
+   }
 }
