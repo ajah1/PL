@@ -315,11 +315,7 @@ public class TraductorDR {
 			e(Token.OPMUL);
 			String trad_f = F(tsimb);
 			String trad_tp = Tp(tsimb);
-			/*if (trad_tp == "") {
-				return trad_f + trad_tp;
-			} else {*/
-			return  " " + lexema_operacion +" "+ trad_f + trad_tp;
-			//}
+			return  " " + traducirOperacion(lexema_operacion) +" "+ trad_f + trad_tp;
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
@@ -359,6 +355,14 @@ public class TraductorDR {
 		case "int": return Simbolo.ENTERO;
 		case "float": return Simbolo.REAL;
 		default: return -1;
+		}
+	}
+	
+	public String traducirOperacion (String operacion)  {
+		switch(operacion.toLowerCase()) {
+		case "mod": return "%";
+		case "div": return "/";
+		default: return operacion;
 		}
 	}
 	
