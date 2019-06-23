@@ -36,7 +36,7 @@ public class TraductorDR {
 			e(Token.VAR);
 			String trad_l = L();
 			e(Token.ENDVAR);
-			return trad_l;
+			return trad_l + "\n";
 		} else {
 			es(Token.VAR);
 		}
@@ -287,7 +287,6 @@ public class TraductorDR {
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(T);
-			//e(Token.OPMUL);
 			return F() + Tp();
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
@@ -301,11 +300,11 @@ public class TraductorDR {
 			e(Token.OPMUL);
 			String trad_f = F();
 			String trad_tp = Tp();
-			if (trad_tp == "") {
+			/*if (trad_tp == "") {
 				return trad_f + trad_tp;
-			} else {
-				return  " " + lexema_operacion +" "+ trad_f + trad_tp;
-			}
+			} else {*/
+			return  " " + lexema_operacion +" "+ trad_f + trad_tp;
+			//}
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
