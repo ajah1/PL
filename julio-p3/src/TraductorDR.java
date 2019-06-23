@@ -253,39 +253,39 @@ public class TraductorDR {
 			return "  "
 				+ tsimb.mutar(lexema_id)	// Para los _
 				+ lexema_id.toLowerCase() 
-				+ " = " + E()+";\n";
+				+ " = " + E(tsimb)+";\n";
 		} else if (_token.tipo == Token.WRITE) {
 			addR(I2);
 			e(Token.WRITE);
 			e(Token.PARI);
-			String trad_e = E();
+			String trad_e = E(tsimb);
 			e(Token.PARD);
 			return "  printf("+trad_e+");\n";
 		} else if (_token.tipo == Token.BEGIN) {
-			addR(I3);
+			addR(I3); 
 			return B(tsimb);
 		} else {
 			es(Token.ID,Token.BEGIN, Token.WRITE);
 		}
 		return "I";
 	}
-	public final String E() {
+	public final String E(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.NUMENTERO 
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(E);
-			return T() + Ep();
+			return T(tsimb) + Ep(tsimb);
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 		return "E";
 	}
-	public final String Ep() {	//////// EPSILON ////////
+	public final String Ep(TablaSimbolos tsimb) {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPAS) {
 			String lexema_operacion = _token.lexema;
 			addR(EP1);
 			e(Token.OPAS);
-			return " "+lexema_operacion+" "+ T() + Ep();
+			return " "+lexema_operacion+" "+ T(tsimb) + Ep(tsimb);
 		} else if (_token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
 				|| _token.tipo == Token.END) {
@@ -297,24 +297,24 @@ public class TraductorDR {
 		}
 		return "Ep";
 	}
-	public final String T() {		//////// EPSILON ////////
+	public final String T(TablaSimbolos tsimb) {		//////// EPSILON ////////
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(T);
-			return F() + Tp();
+			return F(tsimb) + Tp(tsimb);
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
 		return "T";
 	}
-	public final String Tp() {	//////// EPSILON ////////
+	public final String Tp(TablaSimbolos tsimb) {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPMUL) {
 			String lexema_operacion = _token.lexema;
 			addR(TP1);
 			e(Token.OPMUL);
-			String trad_f = F();
-			String trad_tp = Tp();
+			String trad_f = F(tsimb);
+			String trad_tp = Tp(tsimb);
 			/*if (trad_tp == "") {
 				return trad_f + trad_tp;
 			} else {*/
@@ -332,7 +332,7 @@ public class TraductorDR {
 		}
 		return "Tp";
 	}
-	public final String F() {		//////// EPSILON ////////
+	public final String F(TablaSimbolos tsimb) {		//////// EPSILON ////////
 		if (_token.tipo == Token.NUMENTERO) {
 			String lexema_id = _token.lexema;
 			addR(F1);
@@ -347,7 +347,7 @@ public class TraductorDR {
 			String lexema_id = _token.lexema;
 			addR(F3);
 			e(Token.ID);
-			return lexema_id;
+			return tsimb.mutarVar(lexema_id)+lexema_id;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}

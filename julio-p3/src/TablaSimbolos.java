@@ -49,4 +49,15 @@ public class TablaSimbolos {
 		   return "";
 	   }
    }
+   
+   String mutarVar(String nombre) {
+	   Simbolo s = new Simbolo(nombre, 0, "");
+	   if (buscarAmbito(s)) {
+		   return "";
+	   } else if (padre != null) {
+		   return "_" + padre.mutarVar(nombre);
+	   } else {
+		   return "";
+	   }
+   }
 }
