@@ -18,5 +18,6 @@ public class Atributos {
 		lexema = "lexemaVacio";
 		punteros = "";
 		
+		
 	}
 }

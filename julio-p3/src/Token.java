@@ -26,6 +26,13 @@ public class Token {
 		tipo 	= p_tipo;
 	}
 	
+	public Token(Token t) {
+		fila 	= t.fila;
+		columna = t.columna;
+		lexema 	= t.lexema;
+		tipo 	= t.tipo;
+	}
+	
 	static{
 		nombreToken.add("(");
 		nombreToken.add(")");

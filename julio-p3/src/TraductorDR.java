@@ -72,12 +72,19 @@ public class TraductorDR {
 		//System.out.println("ENTRA EN V");
 		if (_token.tipo == Token.ID) {
 			Atributos at = new Atributos();
+			Token token_id = new Token(_token);
 			String lexema_id = _token.getLexema();
 			addR(V);
 			e(Token.ID);
 			e(Token.DOSP);
 			String trad_c = C(at);
 			e(Token.PYC);
+			
+			
+			if (tsimb.buscarAmbito(new Simbolo(lexema_id, -1, ""))) {
+				errorSemantico(ERRYADECL, token_id);
+			}
+			
 			tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "nombreTrad"));
 			return at.tipo + at.punteros + " " 
 				/*tsimb.mutar(lexema_id) +*/ 
@@ -156,6 +163,9 @@ public class TraductorDR {
 			e(Token.NUMENTERO);
 			e(Token.PTOPTO);
 			int lim_sup = Integer.parseInt(_token.lexema);
+			if (lim_inf > lim_sup) {
+				errorSemantico(ERRRANGO, _token);
+			}
 			e(Token.NUMENTERO);
 			return "["+ (lim_sup-lim_inf+1) +"]";
 		} else {
@@ -259,7 +269,7 @@ public class TraductorDR {
 			String mutar = "";
 			// Esta declarada en el ámbito
 			if (tsimb.buscarAmbito(new Simbolo(lexema_id, -1, ""))) {
-				mutar = tsimb.mutar(lexema_id);
+				mutar = tsimb.mutarVar(lexema_id);
 			}
 			
 			return "  "
@@ -375,8 +385,12 @@ public class TraductorDR {
 			return lexema_id;
 		} else if (_token.tipo == Token.ID) {
 			String lexema_id = _token.lexema;
+			Token token_id = new Token(_token);
 			addR(F3);
 			e(Token.ID);
+			if (tsimb.buscar(lexema_id) == null) {
+				errorSemantico(ERRNODECL, token_id);
+			}
 			return tsimb.mutarVar(lexema_id)+lexema_id.toLowerCase();
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
