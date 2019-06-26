@@ -15,6 +15,8 @@ public class TraductorDR {
 	
 	boolean anyadido = false;
 	boolean anyadido2 = false;
+	private final int ERRYADECL=1,ERRNOSIMPLE=2,ERRNODECL=3,ERRTIPOS=4,
+			ERRNOENTEROIZQ=5,ERRNOENTERODER=6,ERRRANGO=7; 
 	///////////////////////////////////////////////////////////////
 	//
 	///////////////////////////////////////////////////////////////
@@ -78,7 +80,9 @@ public class TraductorDR {
 			e(Token.PYC);
 			tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "nombreTrad"));
 			return at.tipo + at.punteros + " " 
-				+ tsimb.mutar(lexema_id) + lexema_id 
+				/*tsimb.mutar(lexema_id) +*/ 
+				+ tsimb.mutar(lexema_id)
+				+ lexema_id 
 				+ trad_c + ";\n";
 		} else {
 			es(Token.ID);
@@ -244,14 +248,22 @@ public class TraductorDR {
 		}
 		return "M";
 	}
+	
 	public final String I(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.ID) {
 			String lexema_id = _token.lexema;
 			addR(I1);
 			e(Token.ID);
 			e(Token.ASIG);
+			
+			String mutar = "";
+			// Esta declarada en el ámbito
+			if (tsimb.buscarAmbito(new Simbolo(lexema_id, -1, ""))) {
+				mutar = tsimb.mutar(lexema_id);
+			}
+			
 			return "  "
-				+ tsimb.mutar(lexema_id)	// Para los _
+				+ mutar	// Para los _
 				+ lexema_id.toLowerCase() 
 				+ " = " + E(tsimb)+";\n";
 		} else if (_token.tipo == Token.WRITE) {
@@ -269,23 +281,32 @@ public class TraductorDR {
 		}
 		return "I";
 	}
+	
 	public final String E(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.NUMENTERO 
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
+			Atributos at = new Atributos();
 			addR(E);
-			return T(tsimb) + Ep(tsimb);
+			return T(tsimb, at) + Ep(tsimb, at);
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 		return "E";
 	}
-	public final String Ep(TablaSimbolos tsimb) {	//////// EPSILON ////////
+	
+	public final String Ep(TablaSimbolos tsimb, Atributos at) {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPAS) {
 			String lexema_operacion = _token.lexema;
 			addR(EP1);
 			e(Token.OPAS);
-			return " "+lexema_operacion+" "+ T(tsimb) + Ep(tsimb);
+			
+			// T necesita saber el tipo que lleva arrastrado
+			// la
+			String trad_t = T(tsimb, at);
+			String trad_ep = Ep(tsimb, at);
+			
+			return " "+lexema_operacion+" "+ trad_t + trad_ep;
 		} else if (_token.tipo == Token.PARD
 				|| _token.tipo == Token.PYC
 				|| _token.tipo == Token.END) {
@@ -297,24 +318,36 @@ public class TraductorDR {
 		}
 		return "Ep";
 	}
-	public final String T(TablaSimbolos tsimb) {		//////// EPSILON ////////
+	
+	public final String T(TablaSimbolos tsimb, Atributos at) {		//////// EPSILON ////////
 		if (_token.tipo == Token.NUMENTERO
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			addR(T);
-			return F(tsimb) + Tp(tsimb);
+			String trad_f = F(tsimb, at);
+			at.Supoper = ""; // Asegurar que es "" ya que no hay operacion a la izquierda
+			String trad_tp = Tp(tsimb, at);
+			
+			if (at.EsItor) {
+				return "itor(" + trad_f + trad_tp;
+			}
+			return trad_f + trad_tp;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
 		}
 		return "T";
 	}
-	public final String Tp(TablaSimbolos tsimb) {	//////// EPSILON ////////
+	
+	public final String Tp(TablaSimbolos tsimb, Atributos at) {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPMUL) {
-			String lexema_operacion = _token.lexema;
+			String lexema_operacion = traducirOperacion(_token.lexema);
 			addR(TP1);
 			e(Token.OPMUL);
-			String trad_f = F(tsimb);
-			String trad_tp = Tp(tsimb);
+			
+			String trad_f = F(tsimb, at);
+			
+			String trad_tp = Tp(tsimb, at);
+			
 			return  " " + traducirOperacion(lexema_operacion) +" "+ trad_f + trad_tp;
 		} else if (_token.tipo == Token.OPAS
 				|| _token.tipo == Token.PARD
@@ -328,7 +361,8 @@ public class TraductorDR {
 		}
 		return "Tp";
 	}
-	public final String F(TablaSimbolos tsimb) {		//////// EPSILON ////////
+	
+	public final String F(TablaSimbolos tsimb, Atributos at) {		//////// EPSILON ////////
 		if (_token.tipo == Token.NUMENTERO) {
 			String lexema_id = _token.lexema;
 			addR(F1);
@@ -343,7 +377,7 @@ public class TraductorDR {
 			String lexema_id = _token.lexema;
 			addR(F3);
 			e(Token.ID);
-			return tsimb.mutarVar(lexema_id)+lexema_id;
+			return tsimb.mutarVar(lexema_id)+lexema_id.toLowerCase();
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
@@ -365,6 +399,29 @@ public class TraductorDR {
 		default: return operacion;
 		}
 	}
+	
+  private void errorSemantico(int nerror,Token tok) {
+    System.err.print("Error semantico ("+tok.fila+","+tok.columna+"): en '"+tok.lexema+"', ");
+		switch (nerror) {
+		  case ERRYADECL: System.err.println("ya existe en este ambito");
+		     break;
+		  case ERRNOSIMPLE: System.err.println("debe ser de tipo entero o real");
+		     break;
+		  case ERRNODECL: System.err.println("no ha sido declarado");
+		     break;
+		  case ERRTIPOS: System.err.println("tipos incompatibles entero/real");
+		     break;
+		  case ERRNOENTEROIZQ: System.err.println("el operando izquierdo debe ser entero");
+		     break;
+		  case ERRNOENTERODER: System.err.println("el operando derecho debe ser entero");
+		     break;
+		  case ERRRANGO: System.err.println("rango incorrecto");
+		         break;
+    }
+    System.exit(-1);
+  }
+
+
 	
 	///////////////////////////////////////////////////////////////
 	//
@@ -450,15 +507,3 @@ public class TraductorDR {
 		F2 	= 32,
 		F3 	= 33;
 }
-
-
-
-
-
-
-
-
-
-
-
-

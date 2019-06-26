@@ -50,7 +50,41 @@ public class TablaSimbolos {
 	   }
    }
    
+   
+   int contarAmbitos() {
+	   if (padre != null) {
+		   return 1 + padre.contarAmbitos();	   
+	   } else {
+		   return 1;
+	   }
+   }
+   
+   int numeroDeAmbito(String nombre) {
+	   Simbolo s = new Simbolo(nombre, 0, "");
+	   if (buscarAmbito(s)) {
+		   return 1;
+	   } else if (padre != null) {
+		   return 1 + padre.numeroDeAmbito(nombre);
+	   } else {
+		   return 0;
+	   }
+   }
+   
    String mutarVar(String nombre) {
+	   int ambitos_totales = contarAmbitos();
+	   int ambitos_encontrada = numeroDeAmbito(nombre);
+	   
+	   String mutar = "";
+	   int mutaciones = (ambitos_totales - ambitos_encontrada);
+	   for (int i = 0; i < mutaciones; ++i) {
+		   mutar += "_";
+	   }
+	   return mutar;
+   }
+   
+   
+   
+  /* String mutarVar(String nombre) {
 	   Simbolo s = new Simbolo(nombre, 0, "");
 	   if (buscarAmbito(s)) {
 		   return "";
@@ -60,4 +94,6 @@ public class TablaSimbolos {
 		   return "";
 	   }
    }
+   */
+
 }
