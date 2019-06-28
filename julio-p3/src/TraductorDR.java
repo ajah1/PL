@@ -85,7 +85,7 @@ public class TraductorDR {
 				errorSemantico(ERRYADECL, token_id);
 			}
 			
-			tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "nombreTrad"));
+			tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "campoDejarVacio"));
 			return at.tipo + at.punteros + " " 
 				/*tsimb.mutar(lexema_id) +*/ 
 				+ tsimb.mutar(lexema_id)
@@ -335,12 +335,8 @@ public class TraductorDR {
 				|| _token.tipo == Token.ID) {
 			addR(T);
 			String trad_f = F(tsimb, at);
-			at.Supoper = ""; // Asegurar que es "" ya que no hay operacion a la izquierda
 			String trad_tp = Tp(tsimb, at);
 			
-			if (at.EsItor) {
-				return "itor(" + trad_f + trad_tp;
-			}
 			return trad_f + trad_tp;
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID, Token.OPMUL);
@@ -354,8 +350,11 @@ public class TraductorDR {
 			addR(TP1);
 			e(Token.OPMUL);
 			
-			String trad_f = F(tsimb, at);
+			// Antes de llamar a F y que pise f_tipo hay que guardarlo
+			String f_tipo = at.f_tipo;
+			String f_lexema = at.f_lexema;
 			
+			String trad_f = F(tsimb, at);
 			String trad_tp = Tp(tsimb, at);
 			
 			return  " " + traducirOperacion(lexema_operacion) +" "+ trad_f + trad_tp;
@@ -377,25 +376,42 @@ public class TraductorDR {
 			String lexema_id = _token.lexema;
 			addR(F1);
 			e(Token.NUMENTERO);
+			at.f_tipo = "i";
+			at.f_lexema = lexema_id;
 			return lexema_id;
 		} else if (_token.tipo == Token.NUMREAL) {
 			String lexema_id = _token.lexema;
 			addR(F2);
 			e(Token.NUMREAL);
+			at.f_tipo = "r";
+			at.f_lexema = lexema_id;
 			return lexema_id;
 		} else if (_token.tipo == Token.ID) {
 			String lexema_id = _token.lexema;
 			Token token_id = new Token(_token);
 			addR(F3);
 			e(Token.ID);
-			if (tsimb.buscar(lexema_id) == null) {
+			
+			Simbolo s_id = tsimb.buscar(lexema_id);
+			if (s_id == null) {
 				errorSemantico(ERRNODECL, token_id);
 			}
+			
+			at.f_tipo = TraducirTipo(s_id.tipo);
+			at.f_lexema = lexema_id;
 			return tsimb.mutarVar(lexema_id)+lexema_id.toLowerCase();
 		} else {
 			es(Token.NUMENTERO, Token.NUMREAL, Token.ID);
 		}
 		return "F";
+	}
+	
+	public String TraducirTipo(int tipo) {
+		switch(tipo) {
+		case Simbolo.ENTERO: return "i";
+		case Simbolo.REAL: return "r";
+		default: return "ERROTRADUCIRTIPO";
+		}
 	}
 	
 	public int ObtenerTipo(String tipo) {

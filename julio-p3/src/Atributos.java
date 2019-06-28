@@ -2,22 +2,21 @@
 public class Atributos {
 	public String tipo;
 	public String punteros;
-	public String operandoIzquierdo;
 	public String lexema;
 	
-	public String Suptipo;
-	public String Supoper;
-	public String Inftipo;
 	
-	public int opeTipo;
-	
-	public boolean EsItor;
+	public String tipoAcumulado;
+	public String f_tipo;
+	public String f_lexema;
 	
 	public Atributos() {
 		tipo = "tipoVacio";
 		lexema = "lexemaVacio";
 		punteros = "";
 		
-		
+		// Al final se usará en Ep y para comprobar si es necesaria conversión con el id
+		tipoAcumulado = "";
+		f_tipo = "";
+		f_lexema = "";
 	}
 }

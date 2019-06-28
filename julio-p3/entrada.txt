@@ -6,8 +6,8 @@ begin
      b : array [ 1..7, 0..2 ] of real;
      c : pointer of pointer of integer;
      d : real;
-     e : array [ 1..5 ] of array [ 3..2 ] of  (* Error semantico (9:39): en '2', rango incorrecto *)
-           pinter of integer;
+     e : array [ 1..5 ] of array [ 3..4 ] of 
+           pointer of integer;
  endvar
 
    d := 7 mOD a / 2 * 2.3;
@@ -26,4 +26,5 @@ begin
        write(6)
     end
    end;
+   e := d+c  (* Error semantico (29,4): en 'e', debe ser de tipo entero o real  *)
 end
