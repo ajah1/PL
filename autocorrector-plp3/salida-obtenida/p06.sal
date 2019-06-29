@@ -2,16 +2,16 @@ int main()
 {
 int a;
 
-  a = itor(2);
-  a = itor(2);
+  a = 2;
+  a = a +i 2;
 {
 int _b;
 
 {
 float __c;
 
-  b = itor(3);
-  a = itor(_b);
+  _b = a +i 3;
+  a = _b;
   __c = itor(a);
   __c = itor(a /i _b);
 }

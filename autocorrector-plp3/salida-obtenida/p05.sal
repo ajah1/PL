@@ -4,15 +4,15 @@ float a;
 int o;
 float p;
 
-  o = itor(23) -i itor(4) +i itor(5) +i itor(2);
-  p = itor(o) +r  -r itor(7);
+  o = 23 -i 4 +i 5 +i 2;
+  p = o +i 3.5 -r 7;
   printf("%d",o);
   printf("%f",p);
 {
 int _olvi;
 int _p;
 
-  _olvi = itor(777) -i itor(555);
+  _olvi = 777 -i 555;
 }
 {
 float _q;
@@ -20,9 +20,9 @@ float _q;
 {
 int __a;
 
-  __a = itor(7);
-  p = itor(__a) +r itor(3);
-  q = itor(1) -r itor(2) +r itor(3) -r ;
+  __a = 7;
+  p = __a +i 3;
+  _q = 1 -i 2 +i 3 -i 4.5;
 }
 }
 }

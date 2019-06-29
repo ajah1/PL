@@ -270,6 +270,8 @@ public class TraductorDR {
 			String mutar = "";
 			// Esta declarada en el ámbito
 			if (tsimb.buscarAmbito(new Simbolo(lexema_id, -1, ""))) {
+				mutar = tsimb.mutar(lexema_id);
+			} else {
 				mutar = tsimb.mutarVar(lexema_id);
 			}
 			Atributos at = new Atributos();
@@ -278,9 +280,9 @@ public class TraductorDR {
 			at.esAsig = true;
 			String trad_e = E(tsimb, at)+";\n";
 			
-			/*if (TraducirTipo(s_id.tipo).contentEquals("i") || at.tipoAcumulado.contentEquals("r")) {
+			if (TraducirTipo(s_id.tipo).contentEquals("i") && at.tipoAcumulado.contentEquals("r")) {
 				errorSemantico(ERRTIPOS, token_asig);
-			}*/
+			}
 			
 			return "  "
 			+ mutar	// Para los _
@@ -312,9 +314,17 @@ public class TraductorDR {
 				|| _token.tipo == Token.NUMREAL
 				|| _token.tipo == Token.ID) {
 			at.t_traduccion = "";
+			String tipo_id = at.tipoAcumulado;
 			addR(E);
 			String trad_t = T(tsimb, at);
 			String trad_ep = Ep(tsimb, at);
+			
+			if (trad_ep.isEmpty() && at.esAsig) {
+				if (tipo_id.contentEquals("r") && at.tipoAcumulado.contentEquals("i")) {
+					at.t_traduccion =  "itor("+at.f_lexema+")";
+				}
+			}
+			
 			return at.t_traduccion;
 			//return trad_t + trad_ep;
 		} else {
@@ -438,21 +448,13 @@ public class TraductorDR {
 			// REGLA VACIO
 			addR(TP2);
 			at.vieneDeMul = false;
-			// Tp es directamente "", faltaría comprobar el único valor en la asignacion
-			if (at.esUnSoloValor) {
-				//at.tipoAcumulado = 
-				if (at.esAsig) {
-					if (!at.f_tipo.contentEquals("")) {
-						// COMPROBAR ERRORES
-						if (at.f_tipo.contentEquals("i")) {
-							at.t_traduccion = at.t_traduccion + "itor("+at.f_lexema+")";
-						}
-					}
-				} else { 
-					at.t_traduccion = at.t_traduccion + at.f_lexema; 
-					at.tipoAcumulado = at.f_tipo;
-				}
+			if (!at.esUnSoloValor) {
+				
+			} else {
+				at.t_traduccion = at.t_traduccion + at.f_lexema; 
+				at.tipoAcumulado = at.f_tipo;
 			}
+
 			return "";
 		} else {
 			es(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
