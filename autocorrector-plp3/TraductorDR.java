@@ -281,6 +281,9 @@ public class TraductorDR {
 			}
 			Atributos at = new Atributos();
 			Simbolo s_id = tsimb.buscar(lexema_id);
+			if (s_id == null) {
+				errorSemantico(ERRNODECL, token_id);
+			}
 			if (s_id.tipo == Simbolo.ARRAY) {
 				errorSemantico(ERRNOSIMPLE, token_id);
 			}
@@ -475,6 +478,8 @@ public class TraductorDR {
 					if (lexema_operacion.contentEquals("/")) {
 						if (at.f_tipo.contentEquals("r")) {
 							errorSemantico(ERRNOENTERODER, token_opmul);
+						} else if (f_tipo.contentEquals("r")) {
+							errorSemantico(ERRNOENTEROIZQ, token_opmul);
 						}
 					}
 					
