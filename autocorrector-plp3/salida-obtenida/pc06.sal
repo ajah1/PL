@@ -21,7 +21,7 @@ int ____d;
 {
 float _____e;
 
-  a = itor(____d) + ;
+  _a = itor(__b) +r ___c +r itor(____d) +r _____e;
 }
 }
 }

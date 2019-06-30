@@ -14,6 +14,7 @@ public class Atributos {
 	public boolean vieneDeMul;
 	public boolean esUnSoloValor;
 	public boolean esAsig;
+	public boolean aux;
 	
 	public Atributos() {
 		tipo = "tipoVacio";
@@ -29,5 +30,16 @@ public class Atributos {
 		vieneDeMul = false;
 		esUnSoloValor = true;
 		esAsig = false;
+	}
+	
+	public Atributos(Atributos a) {
+		tipoAcumulado = a.tipoAcumulado;
+		t_traduccion = a.t_traduccion;
+		f_tipo = a.f_tipo;
+		f_lexema = a.f_lexema;
+		antesAgrupado = a.antesAgrupado;
+		vieneDeMul = a.vieneDeMul;
+		esUnSoloValor = a.esUnSoloValor;
+		esAsig = a.esAsig;
 	}
 }

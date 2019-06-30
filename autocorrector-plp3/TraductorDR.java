@@ -85,7 +85,11 @@ public class TraductorDR {
 				errorSemantico(ERRYADECL, token_id);
 			}
 			
-			tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "campoDejarVacio"));
+			if (trad_c.contains("[")) {
+				tsimb.anyadir(new Simbolo(lexema_id, Simbolo.ARRAY, "campoDejarVacio"));
+			} else {
+				tsimb.anyadir(new Simbolo(lexema_id, ObtenerTipo(at.tipo), "campoDejarVacio"));	
+			}
 			return at.tipo + at.punteros + " " 
 				/*tsimb.mutar(lexema_id) +*/ 
 				+ tsimb.mutar(lexema_id)
@@ -261,6 +265,7 @@ public class TraductorDR {
 	
 	public final String I(TablaSimbolos tsimb) {
 		if (_token.tipo == Token.ID) {
+			Token token_id = new Token(_token);
 			String lexema_id = _token.lexema;
 			addR(I1);
 			e(Token.ID);
@@ -276,6 +281,9 @@ public class TraductorDR {
 			}
 			Atributos at = new Atributos();
 			Simbolo s_id = tsimb.buscar(lexema_id);
+			if (s_id.tipo == Simbolo.ARRAY) {
+				errorSemantico(ERRNOSIMPLE, token_id);
+			}
 			at.tipoAcumulado = TraducirTipo(s_id.tipo);
 			at.esAsig = true;
 			String trad_e = E(tsimb, at)+";\n";
@@ -323,6 +331,12 @@ public class TraductorDR {
 				if (tipo_id.contentEquals("r") && at.tipoAcumulado.contentEquals("i")) {
 					at.t_traduccion =  "itor("+at.f_lexema+")";
 				}
+			} else if (!trad_ep.isEmpty()) {
+				if (!at.antesAgrupado) {
+					if (tipo_id.contentEquals("r") && at.tipoAcumulado.contentEquals("i")) {
+						at.t_traduccion =  "itor("+at.t_traduccion+")";
+					}
+				}
 			}
 			
 			return at.t_traduccion;
@@ -339,19 +353,44 @@ public class TraductorDR {
 			addR(EP1);
 			e(Token.OPAS);
 			
-			// * Comprobar si lo que viene es un valor y necesita itor
+			String sufijo = "";
 			
-			String sufijo = "r";
-			if (at.tipoAcumulado.contentEquals(at.f_tipo)) {
-				if (at.tipoAcumulado.contentEquals("i")) { sufijo = "i"; }
-			}
-			at.t_traduccion = at.t_traduccion + " " + lexema_operacion +sufijo+ " ";
+			/// GUARDAR E -> T
+			Atributos at_copia = new Atributos(at);
 			
 			at.esUnSoloValor = true; // Es necsario reinicializarlo 
+			at.t_traduccion = "";
 			String trad_t = T(tsimb, at);
 			
+			//sufijo = "r";
+			String atct = at_copia.t_traduccion;
+			if (at_copia.esUnSoloValor && at.esUnSoloValor) {
+				if (at_copia.tipoAcumulado.contentEquals(at.tipoAcumulado)) {
+					sufijo = at_copia.tipoAcumulado;
+				} else {
+					sufijo = "r";
+					if (at_copia.tipoAcumulado.contentEquals("i")) {
+						atct = "itor(" + atct + ")";
+						at.antesAgrupado = true;
+					} else {
+						 at.t_traduccion = "itor(" +  at.t_traduccion + ")";
+						 at.antesAgrupado = true;
+					}
+					at.tipoAcumulado = "r";
+				}
+			} else if (!at_copia.esUnSoloValor && at.esUnSoloValor) {
+				sufijo = at_copia.tipoAcumulado;
+				at.antesAgrupado = false;
+			} else if (at_copia.esUnSoloValor && !at.esUnSoloValor) {
+				sufijo = at_copia.tipoAcumulado;
+				at.antesAgrupado = false;
+			}
+			
+			at.t_traduccion = atct + " " + lexema_operacion + sufijo+" "
+					+ at.t_traduccion;
 			
 			String trad_ep = Ep(tsimb, at);
+			
 			
 			return " "+lexema_operacion+" "+ trad_t + trad_ep;
 		} else if (_token.tipo == Token.PARD
@@ -382,6 +421,7 @@ public class TraductorDR {
 	
 	public final String Tp(TablaSimbolos tsimb, Atributos at) {	//////// EPSILON ////////
 		if (_token.tipo == Token.OPMUL) {
+			Token token_opmul = new Token(_token);
 			at.esUnSoloValor = false;
 			at.vieneDeMul = true;
 			String lexema_operacion = traducirOperacion(_token.lexema);
@@ -396,8 +436,15 @@ public class TraductorDR {
 			
 			
 			if (lexema_operacion.contentEquals("%")) {
+				
+				if (!at.antesAgrupado) {
+					if (f_tipo.contentEquals("r")) {
+						errorSemantico(ERRNOENTEROIZQ, token_opmul);
+					}
+				}
+				
 				// Primera preparar operaciones
-				if (f_tipo.contentEquals("i") && at.f_tipo.contentEquals("i") && at.tipoAcumulado.contentEquals("r")) {
+				if (f_tipo.contentEquals("i") && at.f_tipo.contentEquals("i") && at.tipoAcumulado.contentEquals("r")) {					
 					at.t_traduccion = at.t_traduccion + 
 							"itor("+f_lexema+ " " + lexema_operacion + " " + at.f_lexema + ")";
 					at.tipoAcumulado = "r";
@@ -424,6 +471,13 @@ public class TraductorDR {
 								" "+lexema_operacion + sufijo+ " "+at.f_lexema;
 					}
 				} else {
+					
+					if (lexema_operacion.contentEquals("/")) {
+						if (at.f_tipo.contentEquals("r")) {
+							errorSemantico(ERRNOENTERODER, token_opmul);
+						}
+					}
+					
 					String sufijo = "r";
 					if (f_tipo.contentEquals(at.f_tipo) && f_tipo.contentEquals("i")) {
 						sufijo = "i";
@@ -453,6 +507,7 @@ public class TraductorDR {
 			} else {
 				at.t_traduccion = at.t_traduccion + at.f_lexema; 
 				at.tipoAcumulado = at.f_tipo;
+				at.esUnSoloValor = true;
 			}
 
 			return "";

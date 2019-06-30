@@ -16,4 +16,11 @@ public class Simbolo {
     this.nomtrad = nomtrad;
   }
 
+
+  public Simbolo(Simbolo s_id) {
+		this.nombre = s_id.nombre;
+		this.tipo = s_id.tipo;
+		this.nomtrad = s_id.nomtrad;
+	}
+  
 }

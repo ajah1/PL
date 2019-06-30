@@ -7,7 +7,7 @@ float d;
 int* e[5][2];
 
   d = itor(7 /i a)itor(a /i 2);
-  printf("%f",d + itor(2 *i 3) - 4.5);
+  printf("%f",d +r itor(2 *i 3) -r 4.5);
 {
 float _c;
 
@@ -28,10 +28,10 @@ float __b;
 int* __d;
 float __a;
 
-  __a =  + ;
+  __a = 7.51 +r ;
 }
-  d = itor(a) - itor(77 % 7) /r itor(2);
-  printf("%d",1 + 2 - );
+  d = itor(a -i );
+  printf("%d",1 +i 2 -i );
 }
 }
 
