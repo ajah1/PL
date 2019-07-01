@@ -5,6 +5,7 @@ public class TraductorDR {
 	AnalizadorLexico _lexico = null;
 	Token _token = null;
 	StringBuilder _reglas;
+	int c = 0;
 	
 	public TraductorDR(AnalizadorLexico p_al) {
 		_lexico = p_al;
@@ -426,6 +427,7 @@ public class TraductorDR {
 		if (_token.tipo == Token.OPMUL) {
 			Token token_opmul = new Token(_token);
 			at.esUnSoloValor = false;
+			boolean vm = at.vieneDeMul;
 			at.vieneDeMul = true;
 			String lexema_operacion = traducirOperacion(_token.lexema);
 			addR(TP1);
@@ -434,6 +436,7 @@ public class TraductorDR {
 			// Antes de llamar a F y que pise f_tipo hay que guardarlo
 			String f_tipo = at.f_tipo;
 			String f_lexema = at.f_lexema;
+			String tc = at.tipoAcumulado;
 			
 			String trad_f = F(tsimb, at);
 			
@@ -443,14 +446,22 @@ public class TraductorDR {
 				if (!at.antesAgrupado) {
 					if (f_tipo.contentEquals("r")) {
 						errorSemantico(ERRNOENTEROIZQ, token_opmul);
+					} else if (at.f_tipo.contentEquals("r")) {
+						errorSemantico(ERRNOENTERODER, token_opmul);
 					}
 				}
 				
 				// Primera preparar operaciones
-				if (f_tipo.contentEquals("i") && at.f_tipo.contentEquals("i") && at.tipoAcumulado.contentEquals("r")) {					
+				if (f_tipo.contentEquals("i") && at.f_tipo.contentEquals("i") && at.tipoAcumulado.contentEquals("r")) {		
 					at.t_traduccion = at.t_traduccion + 
 							"itor("+f_lexema+ " " + lexema_operacion + " " + at.f_lexema + ")";
 					at.tipoAcumulado = "r";
+					at.antesAgrupado = true;
+				} else if (at.f_tipo.contentEquals("i") && at.tipoAcumulado.contentEquals("i") && !at.antesAgrupado) {
+					at.t_traduccion = at.t_traduccion + f_lexema + " " + lexema_operacion + " " + at.f_lexema;
+					at.antesAgrupado = true;
+				} else if (at.f_tipo.contentEquals("i") && at.tipoAcumulado.contentEquals("i") && at.antesAgrupado) {
+					at.t_traduccion = at.t_traduccion + " " + lexema_operacion + " " + at.f_lexema;
 					at.antesAgrupado = true;
 				}
 				// Ver si es encesario itor
@@ -482,22 +493,54 @@ public class TraductorDR {
 							errorSemantico(ERRNOENTEROIZQ, token_opmul);
 						}
 					}
-					
 					String sufijo = "r";
-					if (f_tipo.contentEquals(at.f_tipo) && f_tipo.contentEquals("i")) {
+					if (f_tipo.contentEquals("i") && at.f_tipo.contentEquals("i")
+							&& lexema_operacion.contentEquals("/")
+							&& !at.antesAgrupado
+							&& c==0
+							&& !vm
+							&& at.esAsig) {
+						at.t_traduccion =
+								"itor("+ f_lexema + ") "+lexema_operacion + "r"
+								+ " itor("+at.f_lexema
+								+")";
+						at.tipoAcumulado = "r";
+						at.antesAgrupado = true;
+					}
+					
+					
+					else if (f_tipo.contentEquals(at.f_tipo) && f_tipo.contentEquals("i")) {
 						sufijo = "i";
 						if (at.tipoAcumulado.contentEquals("r") && at.tipoAcumulado.contentEquals("r")) {
 							at.t_traduccion = at.t_traduccion +
 									"itor("+
 									f_lexema + " "+lexema_operacion + sufijo+ " "+at.f_lexema
 									+")";
+							at.antesAgrupado = true;
+						} else if (at.tipoAcumulado.contentEquals("i") && at.tipoAcumulado.contentEquals("i")) {
+							at.antesAgrupado = true;
+							at.t_traduccion = at.t_traduccion +
+									f_lexema + " "+lexema_operacion + sufijo+ " "+at.f_lexema;
 						}
+					} else if (f_tipo.contentEquals(at.f_tipo) && f_tipo.contentEquals("r")) {
+						at.t_traduccion = at.t_traduccion +
+								f_lexema + " "+lexema_operacion + sufijo+ " "+at.f_lexema;
 					}
 				}
 			}
 			
 			String trad_tp = Tp(tsimb, at);
 			
+			
+			/*if (trad_tp.isEmpty() && at.tipoAcumulado.contentEquals("r") 
+					&& f_tipo.contentEquals("i") && at.f_tipo.contentEquals("i")
+					&& vm == false) {
+				at.t_traduccion = tc +
+						"itorr("+ f_lexema + ") "+lexema_operacion + "i"
+						+ " itor("+at.f_lexema
+						+")";
+			}*/
+			++c;
 			return  " " + traducirOperacion(lexema_operacion) +" "+ trad_f + trad_tp;
 			
 		} else if (_token.tipo == Token.OPAS
@@ -514,7 +557,7 @@ public class TraductorDR {
 				at.tipoAcumulado = at.f_tipo;
 				at.esUnSoloValor = true;
 			}
-
+			c = 0;
 			return "";
 		} else {
 			es(Token.PYC, Token.END, Token.PARD, Token.OPAS, Token.OPMUL);
