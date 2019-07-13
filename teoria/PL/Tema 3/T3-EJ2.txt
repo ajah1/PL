@@ -1,0 +1,47 @@
+S -> A B uno
+A -> dos B
+A -> ep
+B -> C D
+B -> tres
+B -> ep
+C -> cuatro A B
+C -> cinco
+D -> seis
+D -> ep
+
+PRIM(D)	: {seis, ep}
+PRIM(C) : {cuatro, cinco}
+PRIM(B) : PRIM(CD) U {tres} U {ep}
+	: {tres, ep, cuatro, cinco}
+PRIM(A)	: {dos, ep}
+PRIM(S)	: PRIM(ABuno) 
+	: {dos, tres, cuatro, cinco, uno}
+
+--------------------------------------------------
+
+SIG(S)	: {$}
+SIG(A) 	: PRIM(Buno) U PRIM(B) U SIG(C)
+	: {tres, cuatro, cinco, uno} U SIG(C)
+	: {seis, tres, cuatro, cinco, uno}
+SIG(B)	: SIG(A) U SIG(C)
+	: {tres, cuatro, cinco, uno} U SIG(C)
+	: {seis, tres, cuatro, cinco, uno}
+SIG(C)	: PRIM(D) U SIG(B) 
+	: {seis} U {tres, cuatro, cinco, uno} U SIG(C)
+	: {seis, tres, cuatro, cinco, uno}
+SIG(D)	: SIG(B)
+	: {tres, cuatro, cinco, uno} U SIG(C)
+	: {seis, tres, cuatro, cinco, uno}
+
+--------------------------------------------------
+
+S -> A B uno		: PRIM(ABuno) 		: {dos, tres, cuatro, cinco, uno}
+A -> dos B		: {dos}			: {dos}
+A -> ep			: SIG(A)		: {seis, tres, cuatro, cinco, uno}
+B -> C D		: PRIM(CD)		: {cuatro, cinco}
+B -> tres		: {tres}		: {tres}
+B -> ep			: SIG(B)		: {seis, tres, cuatro, cinco, uno}
+C -> cuatro A B		: {cuatro}		: {cuatro}
+C -> cinco		: {cinco}		: {cinco}
+D -> seis		: {seis}		: {seis}
+D -> ep			: SIG(D)		: {seis, tres, cuatro, cinco, uno}

@@ -1,0 +1,145 @@
+S -> C
+C -> class id llavei B V llaved
+B -> public dosp P
+B -> ep
+V -> private dosp P
+V -> ep
+P -> D P
+P -> ep
+D -> Tipo id pari Tipo id L pard Cod
+D -> C
+Cod -> pyc
+Cod -> Bloque
+L -> coma Tipo id L
+L -> ep
+Tipo -> int
+Tipo -> float
+Bloque -> llavei SecInstr llaved
+SecInstr -> Instr pyc SecInstr
+SecInstr -> ep
+Instr -> Tipo id
+Instr -> id asig Expr
+Instr -> Bloque
+Instr -> return Expr
+Expr -> Expr addop Term
+Expr -> Term
+Term -> Term mulop Factor
+Term -> Factor
+Factor -> real
+Factor -> entero
+Factor -> id
+Factor -> pari Expr pard
+
+PRIM(Factor)	: {real, entero, id, pari}
+PRIM(Term)	: PRIM(Termmulop) U PRIM(Factor)
+		: {real, entero, id, pari}
+PRIM(Expr)	: PRIM(Expraddop) U PRIM(Term)
+		: {real, entero, id, pari}
+PRIM(Instr)	: PRIM(Bloque) U {return, id} U PRIM(Tipo)
+		: {llavei, return, id} U PRIM(Tipoid)
+		: {llavei, return, id, int, float}
+PRIM(SecInstr)	: PRIM(Instrpyc) U {ep}
+		: {llavei, return, id, int, float, ep}
+PRIM(Bloque)	: {llavei}
+PRIM(Tipo)	: {int, float}
+PRIM(L)		: {coma, ep}
+PRIM(Cod)	: {pyc} U PRIM(Bloque)
+		: {pyc, llavei}
+PRIM(D)		: PRIM(Tipoid) U PRIM(C)
+		: {int, float} U PRIM(C)
+		: {int, float, class}
+PRIM(P)		: PRIM(DP) U {ep}
+		: {int, float, class, ep}
+PRIM(V)		: {private, ep}
+PRIM(B)		: {public, ep}
+PRIM(C)		: {class}
+PRIM(S)		: PRIM(C)
+		: {class}
+
+-----------------------------------------------------------
+
+SIG(Factor)	: SIG(Term)
+		: {pard, addop, pyc, mulop}
+SIG(Term)	: {mulop} U SIG(Expr)
+		: {pard, addop, pyc, mulop}
+SIG(Expr)	: {pard, addop} U SIG(Instr)
+		: {pard, addop, pyc}
+SIG(Instr)	: {pyc}
+SIG(SecInstr)	: {llaved}
+SIG(Bloque)	: SIG(Cod) U SIG(Instr)
+		: {int, float, class, private, llaved} U SIG(Instr)
+		: {int, float, class, private, llaved, pyc}
+SIG(Tipo)	: {id}
+SIG(L)		: {pard}
+SIG(Cod)	: SIG(D)
+		: {int, float, class, private, llaved}
+SIG(D)		: PRIM(P) U SIG(P)
+		: {int, float, class} - ep U SIG(P)
+		: {int, float, class, private, llaved}
+SIG(P)		: SIG(B) U SIG(V) U SIG(P) 
+		: SIG(B) U {llaved} U SIG(P)
+		: {private, llaved}
+SIG(V)		: {llaved}
+SIG(B)		: PRIM(V llaved)
+		: {private, llaved}
+SIG(C)		: SIG(S) U SIG(D) 
+		: {$} U SIG(D)
+		: {int, float, class, private, llaved, $}
+SIG(S)		: {$}
+
+-----------------------------------------------------------
+
+S -> C					: PRIM(C)	: {class}
+C -> class id llavei B V llaved		: PRIM(class)	: {class}
+B -> public dosp P			: PRIM(public)	: {public}
+B -> ep					: SIG(B)	: {private, llaved}
+V -> private dosp P			: PRIM(private)	: {private}
+V -> ep					: SIG(V)	: {llaved}
+P -> D P				: PRIM(DP)	: {int, float, class}
+P -> ep					: SIG(P)	: {private, llaved}
+D -> Tipo id pari Tipo id L pard Cod	: PRIM(Tipoid)	: {int, float}
+D -> C					: PRIM(C)	: {class}
+Cod -> pyc				: {pyc}		: {pyc}
+Cod -> Bloque				: PRIM(Bloque)	: {llavei}
+L -> coma Tipo id L			: {coma}	: {coma}
+L -> ep					: SIG(L)	: {pard}
+Tipo -> int				: {int}		: {int}
+Tipo -> float				: {float}	: {float}
+Bloque -> llavei SecInstr llaved	: {llavei}	: {llavei}
+SecInstr -> Instr pyc SecInstr		: PRIM(Instrpyc) : {llavei, return, id, int, float}
+SecInstr -> ep				: SIG(SecInstr)	: {llaved}
+Instr -> Tipo id			: PRIM(Tipoid)	: {int, float}
+Instr -> id asig Expr			: {id}		: {id}
+Instr -> Bloque				: PRIM(Bloque)	: {llavei}	
+Instr -> return Expr			: {return}	: {return}
+Expr -> Expr addop Term			: PRIM(Expraddop) : {real, entero, id, pari}
+Expr -> Term				: PRIM(Term)	: {real, entero, id, pari}
+Term -> Term mulop Factor		: PRIM(Term)	: {real, entero, id, pari}
+Term -> Factor				: PRIM(Factor)	: {real, entero, id, pari}
+Factor -> real				: {real}	: {real}
+Factor -> entero			: {entero}	: {entero}
+Factor -> id				: {id}		: {id}
+Factor -> pari Expr pard		: {pari}	: {pari}
+
+-----------------------------------------------------------
+
+void Instr() {
+	if(tkn.tipo in {int, float}) {
+		Tipo();
+		emparejar(Token.id);
+	} else if (tkn.tipo == Token.id) {
+		emparejar(Token.id);
+		emparejar(Token.asig);
+		Expr();
+	} else if (tkn.tipo == Token.llavei) {
+		Bloque();
+	} else if (tkn.tipo == Token.return) {
+		emparejar(Token.return); 
+		Expr();
+	} else {
+		// En la llamada a errorSintactico en el código de Instr debes poner todos los tokens esperados (la unión de los conjuntos de predicción de las reglas de Instr)
+		errorSintáctico(int, float, id, llavei, return);
+	}
+}
+
+No es LL(1) porque hay tokens comunes en las reglas de Expr y Term , y eso se debe a que son reglas recursivas por la izquierda. Es decir, la causa de que una gramática no sea LL(1) es que hay tokens comunes en los conjuntos de predicción de al menos un no terminal, la recursividad por la izquierda hace que haya tokens comunes. Es una sutileza, ya lo sé, pero es más correcto decir lo de los tokens comunes que decir que no es LL(1) porque es recursiva por la izquierda.

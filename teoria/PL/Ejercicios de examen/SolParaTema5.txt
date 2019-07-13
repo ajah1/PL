@@ -1,0 +1,85 @@
+################################################
+		CLASE FINAL DE PL - 23 MAYO 2018
+################################################
+Evince is love, evince is life
+Jun2016 (ejemplos de codigo)
+
+Construye un etds que traduzca:
+
+// EJEMPLOS //
+
+int a,b7; --> var	a:integer;
+					b7:integer;
+
+char *c, **d; --> var 	c:pointer of char;
+						d:pointer of pointer of char;
+
+float *f[6], **g[10][4], h; --> var		f:array[0..5] of pointer of real;
+										g:array[0..9,0..3] of pointer of pointer of real;
+										h:real;
+
+int i[4][5][6]; -->	var		i: array[0..3,0..4,0..5] of integer;
+
+
+// GRAMATICA //
+
+D -> T V L ;
+T -> int
+T -> float
+T -> char
+V -> E
+V -> V[nint]
+E -> * E
+E -> id
+L -> , V L
+L -> € (vacio)
+
+// ARBOL //
+				D
+	T 						V 				L          			;
+int floar char 		V 	[ nint ]		,	V 	L
+					E 							, 	V 	L
+				*	E 									€
+					id 	
+
+E del 3er nivel (la primera E que aparece en el arbol): .id = f (f porque es float)
+														.p = pointer of
+E del 4o nivel (la de * E): .id = f
+							.p = ""	("" porque solo tiene un *)
+
+V del 2o nivel: .id = f
+				.p = pointer of
+				.a = array[0..5]
+
+V del 3er nivel:	.id = f
+					.p = pointer of
+					.a = "" 
+
+// SOLUCION //
+
+E -> id { E.id = id.lexema; E.p = ""; }
+
+E -> * E { E.id = E1.id; E.p = "pointer of" || E1.p }
+
+V -> E { V.id = E.id; V.p = E.p; V.a = ""}
+
+V -> V1 [ nint ] {	V.id = V1.id; V.p = V1.p;
+					if(V1.a == ""){
+						V.a = "array [0.."||(nint.valor - 1) || "]"
+					}else{
+						V.a = V1.a || ",0.."||(nint.valor - 1) || "]"
+					}
+					V.part = "] of"
+				}
+
+D -> T V { L.th = T.tipo } L {
+								D.trad = "var " || V.id || ":" ||
+									V.a || V.post || V.p || T.tipo || ";\n" ||
+									L.trad;
+							}
+
+L -> , V { L1.th = L.th } L1 	{
+									L.trad = V.id || ":" || V.a || V.post || V.p || L.th || ";\n" || L1.trad;
+								}
+
+L -> € { L.trad = "" } 

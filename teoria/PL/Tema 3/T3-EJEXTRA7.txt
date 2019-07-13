@@ -1,0 +1,38 @@
+D -> T id L
+T -> float
+T -> int
+L -> coma id L
+L -> ep
+
+PRIM(L)	: {coma, ep}
+PRIM(T) : {float, int}
+PRIM(D)	: PRIM(Tid)
+	: {float, int}
+
+
+SIG(D)	: {$}
+SIG(T)	: {id}
+SIG(L)	: SIG(D) U SIG(L)
+	: {$}
+
+
+D -> T id L	: PRIM(Tid)	: {float, int}
+T -> float	: PRIM(float)	: {float}
+T -> int	: PRIM(int)	: {int}
+L -> coma id L	: PRIM(coma)	: {coma}
+L -> ep		: SIG(L)	: {$}
+
+Es LL(1) ya que en ningun conjunto de predicción del mismo no terminal se repiten tokens
+
+void L() {
+	if(tkn.tipo == Token.coma) {
+		emparejar(Token.coma);
+		emparejar(Token.id);
+		L();
+	} else if (tkn.tipo == $) {
+		// epsilon
+	} else {
+		errorSintáctico(coma, $);
+	}
+
+}

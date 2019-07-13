@@ -1,0 +1,7 @@
+E -> E + T { T.trad = "suma(" + E1.trad + "," + T.trad + ")"; }
+E -> T {E.trad = T.trad; }
+T -> T * F { T.trad = "mul(" + T_1.trad + "," + F.trad + ")"; }
+T -> F {T.trad = F.trad}
+F -> id {F.trad = id.lex}
+F -> num {F.trad = num.lex}
+F -> pari E pard {F.trad = E.trad}

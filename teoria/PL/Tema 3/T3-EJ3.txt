@@ -1,0 +1,73 @@
+S -> A B C
+S -> D E
+A -> dos B tres
+A -> ep
+B -> B cuatro C cinco
+B -> ep
+C -> seis A B
+C -> ep
+D -> uno A E
+D -> B
+E -> tres
+
+PRIM(E) : {tres}
+PRIM(D) : {uno} U PRIM(B)
+	: {uno, cuatro, ep}
+PRIM(C) : {seis, ep}
+PRIM(B) : PRIM(BcuatroCcinco) U {ep}
+	: {cuatro, ep}
+PRIM(A) : {dos, ep}
+PRIM(S) : PRIM(ABC) U PRIM(DE)
+	: {dos, cuatro, seis, uno, tres, ep}
+
+----------------------------------------------
+
+SIG(S) 	: {$}
+SIG(A) 	: PRIM(BC) U SIG(S) U SIG(C) U PRIM(E) 
+	: {cuatro, seis} U SIG(S) U SIG(C) U {tres}
+	: {cuatro, seis, $, cinco, tres}
+SIG(C)	: SIG(S) U {cinco}
+	: {$, cinco}
+SIG(B)	: PRIM(C) U SIG(S) U {tres, cuatro} U SIG(C) U SIG(D)
+	: {seis, $, tres, cuatro, cinco} U SIG(D)
+	: {seis, $, tres, cuatro, cinco}
+SIG(D)	: PRIM(E)
+	: {tres}
+SIG(E)	: SIG(S) U SIG(D)
+	: {$, tres}
+
+---------------------------------------------
+
+S -> A B C		: PRIM(ABC) U SIG(S) 	: {dos, cuatro, seis, $}
+S -> D E		: PRIM(DE)		: {uno, cuatro, tres}
+A -> dos B tres		: PRIM(dosBtres)	: {dos}
+A -> ep			: SIG(A)		: {cuatro, seis, $, cinco, tres}
+B -> B cuatro C cinco	: PRIM(BcuatroCcinco)	: {cuatro}
+B -> ep			: SIG(B)		: {seis, $, tres, cuatro, cinco}
+C -> seis A B		: PRIM(seisAB)		: {seis}
+C -> ep			: SIG(C)		: {$, cinco}
+D -> uno A E		: PRIM(unoAE)		: {uno}
+D -> B			: PRIM(B) U SIG(D)	: {cuatro, tres}
+E -> tres		: PRIM(tres)		: {tres}
+
+---------------------------------------------
+La gramática no es LL1 ya que existen simbolos comunes en los conjuntos de predicción de S.
+(Unai) ¿Podría no ser LL1 también porque tiene recursividad por la izquierda en B?
+---------------------------------------------
+
+// Esto se hace mirando la gramatica inicial literalmente so easy.
+public final void A() {
+	if(tk.tipo == Token.dos) {
+		emparejar(Token.dos);
+		B();
+		emparejar(Token.tres);
+	else if(tk.tipo in (cuatro, seis, $, cinco, tres)) {
+		// epsilon	
+	} else {
+		errorSintactico(cuatro, seis, $, cinco, tres, dos);
+	}
+}
+
+
+
+

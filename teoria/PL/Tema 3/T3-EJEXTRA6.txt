@@ -1,0 +1,47 @@
+E -> E + T
+E -> T
+T -> F
+T -> T * F
+F -> id
+F -> num
+F -> pari E pard
+
+PRIM(F)	: {id, num, pari}
+PRIM(T) : {id, num, pari} U PRIM(T*)
+	: {id, num, pari}
+PRIM(E) : PRIM(E+) U PRIM(T)
+	: {id, num, pari}
+
+
+SIG(E)	: {+, pard, $}
+SIG(T)	: SIG(E) U SIG(E) U {*}
+	: {+, pard, $, *}
+SIB(F)	: SIG(T) U SIG(T)
+	: {+, pard, $, *}
+
+------ PRED
+
+E -> E + T		: PRIM(E+)		: {id, num, pari}
+E -> T			: PRIM(T)		: {id, num, pari}
+T -> F			: PRIM(F)		: {id, num, pari}
+T -> T * F		: PRIM(T*F)		: {id, num, pari}
+F -> id			: PRIM(id)		: {id}
+F -> num		: PRIM(num)		: {num}
+F -> pari E pard	: PRIM(pariEpard)	: {pari}
+
+
+No es LL(1) porque en el conjunto de predicción de T se repiten tokens
+
+T en ASDR:
+
+void T() {
+	if(tkn.tipo in (id, num, pari))  {
+		F();
+	} else if(tkn.tipo in (id, num, pari)) {
+		T();
+		emparejar(Token.*);
+		F();
+	} else {
+		errorSintáctico(id, num, pari);
+	}
+}

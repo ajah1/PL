@@ -1,0 +1,123 @@
+#EJERCICIO 1 JUNIO 2017
+I -> R = E
+E -> E addop T
+E -> T
+T -> numentero
+T -> R
+R -> id A
+A -> e (vacio)
+A -> [Idx]
+A -> [{Idx}]
+Idx -> Idx , E
+Idx -> E
+
+Ej: int a[10]
+	a[0] -> a[{9}]
+	a[1] -> a[{8}]
+	...
+	a[9] -> a[{0}]
+
+
+Arbol:	Pasamos el tipo de id a A para herencia, luego la A se lo pasa a Idx
+		IMPORTANTE: dependiende de si es [] o [{}] hacemos una formula u otra, pasa otro parametro heredado desde A a Idx
+	R
+id 		A
+	[ 	Idx		]
+	Idx 	, 	E
+
+FORMULAS:
+[]ti = ti-1 * Ti + indi;
+[{}]ti = ti-1 * Ti + (Ti - 1) - indi;
+
+Idx -> E { if(esBasico(Idx.th)) error();		// es Basico detecta por ejemplo int b; b[7,5] = 3; 7,5 es de tipo 													//float
+			else{
+				tmp = nuevaTemp();
+				Idx.dir = tmp;
+				Idx.tipo = TipoBase(Idx.th);	// Tipo heredado desde A
+				if(Idx.inversa){
+					Idx.cod = E.cod ||
+								"mov " || Tamaño(Idx.th) - 1 || " A"
+								"subi " || E.dir ||
+								"mov A " || tmp;
+				}else{	// t2 = E.dir // para no hacer el codigo de t2 = t1 * Tam...
+					Idx.cod = E.cod;
+					Idx.dir = E.dir;
+				}
+			}
+		}
+
+Idx -> Idx1 , { if(esBasica(Idx1.tipo)) error() } E {
+														Idx.tipo = TipoBase(Idx1.tipo);
+														tmp = NuevaTemp();
+														Idx.dir = tmp;
+														if(Idx.inversa){
+															Idx.cod = Idx1.cod || E.cod || 
+																"mov " || Idx1.dir || " A"
+																"muli #" || Tamaño(Idx1.tipo)
+																"addi #" || Tamaño(Idx1.tipo) - 1
+																"subi " || E.dir
+																"mov A " || tmp
+														}else{
+															Idx.cod = Idx.cod || E.cod || "mov " || Idx.dir || "A"
+																"muli #" || Tamaño(Idx1.tipo)
+																"addi " || E.dir
+																"mov " || tipo
+														}
+													}
+A -> [ 	{	
+			Idx.th = A.th;
+			Idx.inversa = false; // Cuando sea [{}] será true
+		} 	Idx ]	{
+						if(!esBasica(Idx.tipo)) error();	// Faltan
+						A.dir = Idx.dir;
+						A.cod = Idx.cod;
+					}
+
+A -> e(vacio)	{
+					tmp = NuevaTemp();
+					A.dir = tmp;
+					A.cod = "mov #0" || tmp:
+				}
+
+R -> id 	{
+				simbolo = Busca(id.lexema); // error si no esta
+				A.th = simbolo.tipo;
+			}	A 	{
+						tmp = NuevaTemp();
+						R.dir = tmp;
+						R.cod = A.cod || "mov " || A.dir || "A"
+							"addi # "|| simbolo.direccion
+							"mov A "|| tmp;
+					}
+
+T -> R	{
+			tmp = NuevaTemp();
+			T.dir = tmp;
+			T.cod = R.cod || "mov " || R.dir || "A"
+				"mov @A " || tmp; 
+		}
+
+T -> numentero 	{
+					T.dir = NuevaTemp();
+					T.cod = "mov #" || numentero.lexema || T.dir
+				}
+
+E -> T 	{	
+			E.cod = T.cod;
+			E.dir = T.dir
+	 	}
+
+E -> E1 addop T 	{	
+						tmp = NuevaTemp();
+						E.dir = tmp;
+						E.cod = E1.cod || T.cod ||
+							"mov " || E1.dir || "A"
+							addop.cod || "i" || T.dir
+							"mov A" || tmp;
+					}
+
+
+
+
+
+

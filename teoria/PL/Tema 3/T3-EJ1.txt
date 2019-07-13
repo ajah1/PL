@@ -1,0 +1,46 @@
+S -> A uno B C
+S -> S dos
+A -> B C D
+A -> A tres
+A -> ep
+B -> D cuatro C tres
+B -> ep
+C -> cinco D B
+C -> ep
+D -> seis
+D -> ep
+
+PRIM(D)	: {seis, ep}
+PRIM(C)	: {cinco, ep}
+PRIM(B) : PRIM(Dcuatro)
+	: {seis, cuatro, ep}
+PRIM(A) : PRIM(BCD) U PRIM(A) U ep
+	: {seis, cuatro, ep, cinco, tres}
+PRIM(S) : PRIM(Auno) U PRIM(Sdos)
+	: {seis, cuatro, cinco, tres, uno}
+
+-------------------------------------------------
+
+SIG(S)	: {dos, $}
+SIG(A)	: {uno} U {tres}
+	: {uno, tres}
+SIG(C)	: SIG(S) U PRIM(D) U SIG(A) U {tres}
+	: {dos, tres, seis, uno, $}
+SIG(B)	: PRIM(C) U SIG(S) U PRIM(CD) U SIG(A) U SIG(C)
+	: {cinco, dos, $, seis, uno, tres}
+SIG(D)	: SIG(A) U {cuatro} U PRIM(B) u SIG(C) 
+	: {uno, dos, tres, cuatro, seis, $}
+
+------------------------------------------------- POR CORREGIR (CONJ PRED.)
+
+S -> A uno B C		: PRIM(AunoBC)		: {seis, cuatro, cinco, tres, uno}
+S -> S dos		: PRIM(Sdos)		: {seis, cuatro, cinco, tres, uno}
+A -> B C D		: PRIM(BCD)		: {cuatro, cinco, seis, uno, tres}
+A -> A tres		: PRIM(Atres)		: {seis, cuatro, cinco, tres}
+A -> ep			: SIG(A)		: {uno, tres}
+B -> D cuatro C tres	: PRIM(DcuatroCtres)	: {seis, cuatro}
+B -> ep			: SIG(B)		: {cinco, dos, $, seis, uno, tres}
+C -> cinco D B		: PRIM(cincoDB)		: {cinco}
+C -> ep			: SIG(C)		: {dos, tres, seis, uno, $}
+D -> seis		: {seis}		: {seis}
+D -> ep			: SIG(D)		: {uno, dos, tres, cuatro, seis, $}

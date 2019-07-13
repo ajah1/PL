@@ -1,0 +1,66 @@
+S -> B uno
+S -> dos C
+S -> ep
+A -> S tres B C
+A -> cuatro
+A -> ep
+B -> A cinco C seis
+B -> ep
+C -> siete B
+C -> ep
+
+1 ----- PRIMEROS --------------
+
+PRIM(C) : {siete, ep}
+PRIM(B) : PRIM(Acinco) U {ep}
+	: PRIM(A) U {cinco, ep}
+	: PRIM(B) U {dos, uno, cuatro, tres, cinco, ep}
+	: {dos, uno, cuatro, tres, cinco, ep}
+PRIM(A) : PRIM(Stres) U {cuatro, ep}
+	: PRIM(S) U {cuatro, tres, ep}
+	: PRIM(B) U {dos, uno, cuatro, tres, ep}
+	: {dos, uno, cuatro, tres, cinco, ep}
+PRIM(S) : PRIM(Buno) U {dos, ep}
+	: PRIM(B) U {dos, uno, ep}
+	: {dos, uno, cuatro, tres, cinco, ep}
+
+2 ---------------- SIGUIENTES ---------------------------------------
+
+SIG(S)	: {tres, $}
+SIG(A)	: {cinco}
+SIG(B)	: {uno} U PRIM(C) U SIG(A) U SIG(C)
+	: {uno, siete, cinco} U SIG(C)
+	: {uno, siete, cinco, tres, $, seis}
+SIG(C)	: SIG(S) U SIG(A) U {seis}
+	: {tres, $, cinco, seis}
+
+3 ---------------- CONJ PRED ---------------------------------------
+
+S -> B uno		: PRIM(Buno)		: {dos, uno, cuatro, tres, cinco}
+S -> dos C		: {dos}			: {dos}						
+S -> ep			: SIG(S)		: {tres, $}
+A -> S tres B C		: PRIM(StresBC)		: {dos, uno, cuatro, tres, cinco}
+A -> cuatro		: {cuatro}		: {cuatro}
+A -> ep			: SIG(A)		: {cinco}
+B -> A cinco C seis	: PRIM(AcincoCseis)	: {dos, uno, cuatro, tres, cinco}
+B -> ep			: SIG(B)		: {uno, siete, cinco, tres, $, seis}
+C -> siete B		: {siete}		: {siete}
+C -> ep			: SIG(C)		: {tres, $, cinco, seis}
+
+4 - No es LL(1) ya que en el conjunto de preducción de S se repite un token (dos)
+
+
+5 - B en ASDR
+
+void B() {
+	if(tkn.tipo in {dos, uno, cuatro, tres, cinco}) {
+		A();
+		emparejar(Token.cinco);
+		C();
+		emparejar(Token.seis);
+	} else if(token.tipo in {uno, siete, cinco, tres, $, seis}) { 
+		// epsilon
+	} else {
+		errorSintáctico(uno, siete, tres, $, seis, dos, cuatro, cinco);
+	}
+} 

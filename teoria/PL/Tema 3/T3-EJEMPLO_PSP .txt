@@ -1,0 +1,51 @@
+S -> A B C
+A -> D E f C | a | ep
+B -> E G C | b | ep
+C -> c | ep
+D -> d | ep
+E -> e | ep
+G -> g
+
+PRIM(G) : {g}
+PRIM(E) : {e, ep}
+PRIM(D) : {d, ep}
+PRIM(C) : {c, ep}
+PRIM(B) : PRIM(E) U PRIM(G) 
+	: {e, g, b, ep}
+PRIM(A) : {a, ep} U PRIM(D) U PRIM(E) U {f}
+	: {a, d, e, f, ep}
+PRIM(S) : PRIM(A) U PRIM(B) U PRIM(C)
+	: {a, d, e, f, g, b, c, ep}
+   
+---------------------------------------------------
+
+SIG(S)  : {$}
+SIG(A)	: PRIM(BC) - {ep} U SIG{S}
+	: {e, g, b, c, $}
+SIG(B)	: PRIM(C) - {ep} U SIG(S) 
+	: {c, $}
+SIG(C)	: SIG(S) U SIG(A) U SIG(B)
+	: {e, g, b, c, $}
+SIG(D)	: PRIM(E) - {ep} U {f}
+	: {e, f}
+SIG(E)	: PRIM(fC) U PRIM(GC) 
+	: {f, g}
+SIG(G)	: PRIM(C) - {ep} U SIG(B)
+	: {c, $}
+
+--------------------------------------------------
+S -> A B C	: PRIM(ABC) U SIG(S) 	: {a, d, e, f, g, b, c, $}
+A -> D E f C	: PRIM(DEfC)		: {d, e, f}
+A -> a		: {a}			: {a}
+A -> ep		: SIG(A)		: {e, g, b, c, $}
+B -> E G C	: PRIM(EGC)		: {e, g}
+B -> b		: {b}			: {b}
+B -> ep		: SIG(B)		: {c, $}
+C -> c		: {c}			: {c}
+C -> ep		: SIG(C)		: {e, g, b, c, $}
+D -> d		: {d}			: {d}
+D -> ep		: SIG(D)		: {e, f}
+E -> e		: {e}			: {e}
+E -> ep		: SIG(E)		: {f, g}
+G -> g		: {g}			: {g}
+

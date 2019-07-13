@@ -1,0 +1,5 @@
+E -> T { E'.th = T.trad; } E’ {E.trad = E'.trad;}
+E’ -> op T {E1'.th = op.trad + "(" + E'.th + "," T.trad + ")";} E’ {E'.trad = E'1.trad; }
+E’ -> ep {E'.trad = E'.th;}
+T -> id { T.trad = id.lex; }
+T -> ( E ) { T.trad = E.trad; }

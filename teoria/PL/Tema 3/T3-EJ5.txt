@@ -1,0 +1,53 @@
+S -> A B C
+S -> S uno
+A -> dos B C
+A -> ep
+B -> C tres
+B -> ep
+C -> cuatro B
+C -> ep
+
+PRIM(C)	: {cuatro, ep}
+PRIM(B) : PRIM(Ctres) U {ep}
+	: {cuatro, tres, ep}
+PRIM(A) : {dos, ep}
+PRIM(S)	: PRIM(ABC) U PRIM(Suno)
+	: {dos, cuatro, tres, uno, ep}
+
+
+SIG(S)	: {uno, $}
+SIG(A)	: PRIM(BC) U SIG(S)
+	: {cuatro, tres, uno, $}
+SIB(B)	: PRIM(C) U SIG(S) U PRIM(C) U SIG(A) U SIG(C)
+	: {cuatro, uno, $, tres} U SIG(C)
+	: {cuatro, uno, $, tres}
+SIG(C)	: SIG(S) U SIG(A) U {tres}
+	: {uno, $, cuatro, tres}
+
+
+------ PRED
+
+S -> A B C	: PRIM(ABC) U SIG(S)	: {dos, cuatro, tres, uno, $}
+S -> S uno	: PRIM(Suno)		: {dos, cuatro, tres, uno}
+A -> dos B C	: PRIM(dosBC)		: {dos}
+A -> ep		: SIG(A)		: {cuatro, tres, uno, $}
+B -> C tres	: PRIM(Ctres)		: {cuatro, tres}
+B -> ep		: SIG(B)		: {cuatro, uno, $, tres}
+C -> cuatro B	: PRIM(cuatroB)		: {cuatro}
+C -> ep		: SIG(C)		: {uno, $, cuatro, tres}
+
+
+No es LL(1) porque en el conjunto de predicción de S se repiten tokens
+
+C en ASDR:
+
+void C() {
+	if(tkn.tipo == Token.cuatro)  {
+		emparejar(Token.cuatro);
+		B();
+	} else if(is_tokenIncluding(uno, $, cuatro, tres)) {
+		// epsilon
+	} else {
+		errorSintáctico(uno, $, cuatro, tres);
+	}
+}
